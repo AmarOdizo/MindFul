@@ -1,31 +1,87 @@
 import { NativeModules, Platform } from 'react-native';
 
-// In Expo development:
-// - Physical mobile devices (Android/iOS via Expo Go) need your computer's local Wi-Fi IP
-// - Web uses localhost
-const getDevBaseUrl = () => {
+// Detect if running inside an Android Emulator
+const isAndroidEmulator = () => {
+  if (Platform.OS !== 'android') return false;
+  const c = Platform.constants || {};
+  const model = (c.Model || '').toLowerCase();
+  const brand = (c.Brand || '').toLowerCase();
+  const manufacturer = (c.Manufacturer || '').toLowerCase();
+  const fingerprint = (c.Fingerprint || '').toLowerCase();
+  const hardware = (c.Hardware || '').toLowerCase();
+
+  return (
+    model.includes('sdk') ||
+    model.includes('emulator') ||
+    model.includes('google_sdk') ||
+    (brand.includes('google') && model.includes('gphone')) ||
+    manufacturer.includes('genymotion') ||
+    fingerprint.includes('generic') ||
+    hardware.includes('goldfish') ||
+    hardware.includes('ranchu')
+  );
+};
+
+let cachedWorkingBaseUrl = null;
+
+// Returns an array of candidate URLs to try in priority order
+export const getApiBaseUrls = () => {
   if (Platform.OS === 'web') {
-    return 'http://localhost:5000';
+    return ['http://localhost:5000'];
   }
 
-  // Auto-detect the host machine's IP from Metro bundler scriptURL
+  const list = [];
+  // Prioritize previously verified working base URL
+  if (cachedWorkingBaseUrl) {
+    list.push(cachedWorkingBaseUrl);
+  }
+
+  const isEmulator = isAndroidEmulator();
+
+  // If in Android Emulator, 10.0.2.2 is the official virtual router alias to PC localhost
+  if (isEmulator && !list.includes('http://10.0.2.2:5000')) {
+    list.push('http://10.0.2.2:5000');
+  }
+
+  // Auto-detect from Metro scriptURL if available
   try {
     const scriptURL = NativeModules?.SourceCode?.scriptURL;
     if (scriptURL) {
-      const host = scriptURL.split('://')[1]?.split('/')[0]?.split(':')[0];
+      const match = scriptURL.match(/https?:\/\/([^/:]+)/);
+      const host = match ? match[1] : null;
       if (host && host !== 'localhost' && host !== '127.0.0.1') {
-        return `http://${host}:5000`;
+        const metroHost = `http://${host}:5000`;
+        if (!list.includes(metroHost)) list.push(metroHost);
       }
     }
   } catch (e) {
     // ignore
   }
 
-  // Your computer's active Wi-Fi LAN IP
-  return 'http://192.168.1.5:5000';
+  // Active Wi-Fi LAN IP (192.168.1.3)
+  if (!list.includes('http://192.168.1.3:5000')) {
+    list.push('http://192.168.1.3:5000');
+  }
+
+  // 10.0.2.2 for Android in general
+  if (Platform.OS === 'android' && !list.includes('http://10.0.2.2:5000')) {
+    list.push('http://10.0.2.2:5000');
+  }
+
+  // Localhost (works when using: adb reverse tcp:5000 tcp:5000)
+  if (!list.includes('http://localhost:5000')) {
+    list.push('http://localhost:5000');
+  }
+
+  return list;
 };
 
-export const API_BASE_URL = getDevBaseUrl();
+export const getApiBaseUrl = () => {
+  return getApiBaseUrls()[0];
+};
+
+// Export base URL for backward compatibility
+export const API_BASE_URL = getApiBaseUrl();
 
 let currentAuthToken = null;
 
@@ -37,38 +93,73 @@ export const getAuthToken = () => {
   return currentAuthToken;
 };
 
-// Generic request helper with timeout and fallback handling
+// Generic request helper with multi-candidate auto-fallback
 async function request(endpoint, options = {}) {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
+  const candidateUrls = getApiBaseUrls();
   const headers = {
     'Content-Type': 'application/json',
     ...(currentAuthToken ? { Authorization: `Bearer ${currentAuthToken}` } : {}),
     ...(options.headers || {}),
   };
 
-  try {
+  let lastError = null;
+
+  for (let i = 0; i < candidateUrls.length; i++) {
+    const baseUrl = candidateUrls[i];
+    const url = `${baseUrl}${endpoint}`;
+
+    // Faster timeout for early candidates so fallback happens promptly
+    const isSingleCandidate = candidateUrls.length === 1 || Boolean(cachedWorkingBaseUrl);
+    const timeoutMs = isSingleCandidate ? 15000 : 4000;
+
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-      signal: controller.signal,
-    });
+    console.log(`[API] ${options.method || 'GET'} ${url} (target ${i + 1}/${candidateUrls.length})`);
 
-    clearTimeout(timeoutId);
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      });
 
-    const json = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(json.error || json.message || `HTTP ${response.status}`);
+      clearTimeout(timeoutId);
+
+      const json = await response.json().catch(() => ({}));
+
+      // Server answered! Lock in this working host for future calls
+      cachedWorkingBaseUrl = baseUrl;
+
+      if (!response.ok) {
+        throw new Error(json.error || json.message || `HTTP ${response.status}`);
+      }
+
+      return json;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      lastError = error;
+
+      // If the server answered with an HTTP error status (400, 401, 500 etc), it's reachable
+      if (
+        error.message &&
+        (error.message.startsWith('HTTP ') ||
+          (!error.message.includes('canceled') &&
+            !error.message.includes('Network request failed') &&
+            !error.message.includes('fetch') &&
+            error.name !== 'AbortError'))
+      ) {
+        throw error;
+      }
+
+      console.warn(`[API] Unreachable: ${baseUrl}. Trying alternative...`);
     }
-
-    return json;
-  } catch (error) {
-    console.warn(`[API] Error on ${options.method || 'GET'} ${endpoint}:`, error.message);
-    throw error;
   }
+
+  console.warn(`[API] All backend endpoints unreachable:`, candidateUrls);
+  throw new Error(
+    `Unable to connect to backend server. Tried: ${candidateUrls.join(', ')}. Please verify backend is running on port 5000.`
+  );
 }
 
 // -------------------------------------------------------------
@@ -144,6 +235,10 @@ export const chatApi = {
   getChatHistory: async (limit = 30) => {
     return request(`/api/chat/history?limit=${limit}`);
   },
+
+  clearChatHistory: async () => {
+    return request('/api/chat/history', { method: 'DELETE' });
+  },
 };
 
 // -------------------------------------------------------------
@@ -177,4 +272,5 @@ export default {
   chat: chatApi,
   auth: authApi,
   API_BASE_URL,
+  getApiBaseUrl,
 };

@@ -18,7 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius, shadows } from '../theme';
 import { useAuth } from '../context/AuthContext';
 
-// Curated Calming Avatars for Profile Customization
+// Curated calming avatars for profile customization
 const AVATAR_OPTIONS = [
   {
     id: 'lotus',
@@ -58,8 +58,10 @@ export default function ProfileScreen({ navigation }) {
   const { user, logout, updateUser } = useAuth();
 
   // Profile Information States
-  const [bio, setBio] = useState('Seeking daily calm, conscious breathing, and mindful clarity.');
-  const [dailyGoal, setDailyGoal] = useState(15);
+  const [bio, setBio] = useState(
+    user?.bio || 'Seeking daily calm, conscious breathing, and mindful clarity.'
+  );
+  const [dailyGoal, setDailyGoal] = useState(user?.dailyGoal || 15);
   const [avatarUri, setAvatarUri] = useState(
     user?.avatar || AVATAR_OPTIONS[0].uri
   );
@@ -71,21 +73,11 @@ export default function ProfileScreen({ navigation }) {
   const [tempGoal, setTempGoal] = useState(dailyGoal);
   const [tempAvatar, setTempAvatar] = useState(avatarUri);
 
-  // Companion & Notification Toggles
-  const [memoryEnabled, setMemoryEnabled] = useState(true);
-  const [biometricEnabled, setBiometricEnabled] = useState(true);
+  // Settings & Toggles
   const [morningEnabled, setMorningEnabled] = useState(true);
   const [eveningEnabled, setEveningEnabled] = useState(true);
-  const [digestEnabled, setDigestEnabled] = useState(false);
-
-  // Maya Impressions State
-  const [memories, setMemories] = useState([
-    { id: '1', text: 'Noticed heightened workplace anxiety around deadlines' },
-    { id: '2', text: 'Prefers 4-7-8 breathing exercises before 10 PM sleep' },
-    { id: '3', text: 'Finds calming relief in emerald and nature atmospheres' },
-  ]);
-  const [newMemoryInput, setNewMemoryInput] = useState('');
-  const [isAddingMemory, setIsAddingMemory] = useState(false);
+  const [audioSounds, setAudioSounds] = useState(true);
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
 
   // Open Edit Modal
   const handleOpenEditModal = () => {
@@ -99,7 +91,7 @@ export default function ProfileScreen({ navigation }) {
   // Save Profile Edits
   const handleSaveProfile = () => {
     const updatedName = tempName.trim() || 'Sanctuary Seeker';
-    const updatedBio = tempBio.trim() || 'Mindful Sanctuary Seeker';
+    const updatedBio = tempBio.trim() || 'Seeking daily calm, conscious breathing, and mindful clarity.';
     setBio(updatedBio);
     setDailyGoal(tempGoal);
     setAvatarUri(tempAvatar);
@@ -114,47 +106,7 @@ export default function ProfileScreen({ navigation }) {
     }
 
     setIsEditModalVisible(false);
-    Alert.alert('Profile Updated', 'Your sanctuary settings have been gently saved. ✨');
-  };
-
-  // Memory Management
-  const removeMemory = (id) => {
-    setMemories(memories.filter((m) => m.id !== id));
-  };
-
-  const handleAddMemory = () => {
-    if (!newMemoryInput.trim()) return;
-    const newEntry = {
-      id: Date.now().toString(),
-      text: newMemoryInput.trim(),
-    };
-    setMemories([newEntry, ...memories]);
-    setNewMemoryInput('');
-    setIsAddingMemory(false);
-  };
-
-  const handleClearAllMemories = () => {
-    Alert.alert(
-      'Reset Companion Memory',
-      'Maya will gently clear all stored reflections and start with a fresh emotional canvas.',
-      [
-        { text: 'Keep Impressions', style: 'cancel' },
-        {
-          text: 'Clear All',
-          style: 'destructive',
-          onPress: () => setMemories([]),
-        },
-      ]
-    );
-  };
-
-  // Archive Export Feedback
-  const handleExportArchive = () => {
-    Alert.alert(
-      'Personal Sanctuary Archive',
-      'Your encrypted emotional trail & journal entries have been compiled securely (GDPR compliant).',
-      [{ text: 'Great, Thank You' }]
-    );
+    Alert.alert('Profile Saved', 'Your sanctuary profile has been updated ✨');
   };
 
   // Sign Out Handler
@@ -163,7 +115,7 @@ export default function ProfileScreen({ navigation }) {
       'Leave Sanctuary',
       'Are you sure you wish to sign out of MindFul?',
       [
-        { text: 'Stay Here', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
           text: 'Sign Out',
           style: 'destructive',
@@ -184,24 +136,24 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* Top Header Bar */}
+      {/* Top Header */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.brandBadge}>
-            <Ionicons name="sparkles" size={12} color="#10B981" />
-            <Text style={styles.brandBadgeText}>MINDFUL SANCTUARY</Text>
+        <View>
+          <View style={styles.brandRow}>
+            <Ionicons name="sparkles" size={11} color="#059669" />
+            <Text style={styles.brandTag}>SANCTUARY PROFILE</Text>
           </View>
-          <Text style={styles.headerTitle}>My Profile</Text>
+          <Text style={styles.headerTitle}>My Space</Text>
         </View>
 
-        <View style={styles.headerRight}>
+        <View style={styles.headerActions}>
           <TouchableOpacity
-            style={styles.sosBtn}
+            style={styles.sosButton}
             onPress={() => navigation.navigate('CrisisSupport')}
             activeOpacity={0.8}
           >
-            <Ionicons name="heart" size={14} color="#EF4444" />
-            <Text style={styles.sosBtnText}>SOS</Text>
+            <Ionicons name="heart" size={13} color="#EF4444" />
+            <Text style={styles.sosButtonText}>SOS</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -211,490 +163,317 @@ export default function ProfileScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         {/* HERO IDENTITY CARD */}
-        <View style={styles.identityHeroCard}>
-          {/* Top Row with Avatar & Info */}
-          <View style={styles.identityTopRow}>
-            <View style={styles.avatarWrapper}>
-              <Image source={{ uri: avatarUri }} style={styles.avatarImg} />
-              <View style={styles.avatarPresencePulse} />
-              <TouchableOpacity
-                style={styles.avatarEditPencil}
-                onPress={handleOpenEditModal}
-                activeOpacity={0.8}
-              >
-                <Ionicons name="pencil" size={13} color="#FFFFFF" />
-              </TouchableOpacity>
-            </View>
+        <View style={styles.heroCard}>
+          <View style={styles.heroTopRow}>
+            {/* Avatar with edit overlay */}
+            <TouchableOpacity
+              style={styles.avatarContainer}
+              onPress={handleOpenEditModal}
+              activeOpacity={0.85}
+            >
+              <Image source={{ uri: avatarUri }} style={styles.avatarImage} />
+              <View style={styles.avatarPencilBadge}>
+                <Ionicons name="pencil" size={11} color="#FFFFFF" />
+              </View>
+            </TouchableOpacity>
 
-            <View style={styles.identityDetails}>
-              <View style={styles.badgeRow}>
-                <View style={styles.memberTierBadge}>
-                  <Ionicons name="shield-checkmark" size={11} color="#059669" />
-                  <Text style={styles.memberTierText}>Verified Member</Text>
-                </View>
-                <View style={styles.statusPill}>
-                  <Text style={styles.statusPillText}>Online</Text>
+            {/* User Info */}
+            <View style={styles.heroUserInfo}>
+              <View style={styles.memberTagRow}>
+                <View style={styles.memberTag}>
+                  <Ionicons name="shield-checkmark" size={10} color="#059669" />
+                  <Text style={styles.memberTagText}>Mindful Seeker</Text>
                 </View>
               </View>
-
-              <Text style={styles.userNameText}>{displayName}</Text>
-              <Text style={styles.userEmailText}>{displayEmail}</Text>
-
-              <TouchableOpacity
-                style={styles.editProfileButton}
-                onPress={handleOpenEditModal}
-                activeOpacity={0.8}
-              >
-                <Ionicons name="create-outline" size={14} color="#6366F1" />
-                <Text style={styles.editProfileButtonText}>Edit Profile</Text>
-              </TouchableOpacity>
+              <Text style={styles.userName} numberOfLines={1}>
+                {displayName}
+              </Text>
+              <Text style={styles.userEmail} numberOfLines={1}>
+                {displayEmail}
+              </Text>
             </View>
+
+            {/* Quick Edit Action Button */}
+            <TouchableOpacity
+              style={styles.editBtnSmall}
+              onPress={handleOpenEditModal}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="create-outline" size={14} color="#059669" />
+              <Text style={styles.editBtnSmallText}>Edit</Text>
+            </TouchableOpacity>
           </View>
 
-          {/* User Intention / Bio Quote Pill */}
-          <View style={styles.intentionCard}>
-            <View style={styles.intentionHeaderRow}>
-              <Ionicons name="bulb-outline" size={14} color="#F59E0B" />
-              <Text style={styles.intentionLabel}>SANCTUARY INTENTION</Text>
+          {/* User Intention / Bio Quote Box */}
+          <View style={styles.bioContainer}>
+            <View style={styles.bioHeaderRow}>
+              <Ionicons name="bulb-outline" size={12} color="#D97706" />
+              <Text style={styles.bioLabel}>DAILY INTENTION</Text>
             </View>
-            <Text style={styles.intentionQuoteText}>“{bio}”</Text>
-          </View>
-
-          {/* Maya Companion Bond Bar */}
-          <View style={styles.companionSyncRow}>
-            <View style={styles.companionSyncLeft}>
-              <View style={styles.companionSyncIconBox}>
-                <Ionicons name="planet" size={18} color="#8B5CF6" />
-              </View>
-              <View>
-                <Text style={styles.companionSyncTitle}>Maya AI Companion Bond</Text>
-                <Text style={styles.companionSyncSubtitle}>Tier 3 Sanctuary Resonance</Text>
-              </View>
-            </View>
-            <View style={styles.syncScorePill}>
-              <Text style={styles.syncScoreText}>98% Sync</Text>
-            </View>
+            <Text style={styles.bioText} numberOfLines={2}>
+              "{bio}"
+            </Text>
           </View>
         </View>
 
-        {/* SECTION: WELLNESS STATS DECK (4 Vibrant Cards) */}
-        <View style={styles.sectionArea}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionHeaderLeft}>
-              <Ionicons name="stats-chart" size={18} color="#6366F1" />
-              <Text style={styles.sectionTitle}>Wellness Journey</Text>
-            </View>
-            <Text style={styles.sectionSubBadge}>Lifetime Metrics</Text>
-          </View>
+        {/* 4 COMPACT JOURNEY STATS */}
+        <View style={styles.statsSection}>
+          <Text style={styles.sectionHeaderTitle}>Wellness Journey</Text>
 
-          {/* Symmetrical Two-Row 2x2 Grid */}
-          <View style={styles.statsContainer}>
-            {/* Row 1: Streak (Amber) & Mindful Breathing (Emerald) */}
-            <View style={styles.statsRow}>
-              {/* Card 1: Active Streak */}
-              <View style={[styles.statCard, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}>
-                <View style={styles.statCardTopRow}>
-                  <View style={[styles.statIconBox, { backgroundColor: '#FEF3C7' }]}>
-                    <Ionicons name="flame" size={20} color="#D97706" />
-                  </View>
-                  <View style={[styles.statMiniTag, { backgroundColor: '#FEF3C7' }]}>
-                    <Text style={[styles.statMiniTagText, { color: '#B45309' }]}>🔥 Best: 14d</Text>
-                  </View>
+          <View style={styles.statsGrid}>
+            {/* Streak */}
+            <View style={[styles.statCard, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}>
+              <View style={styles.statTop}>
+                <View style={[styles.statIconWrap, { backgroundColor: '#FEF3C7' }]}>
+                  <Ionicons name="flame" size={15} color="#D97706" />
                 </View>
-                <View style={styles.statCardBottom}>
-                  <Text style={[styles.statNumber, { color: '#92400E' }]}>7 Days</Text>
-                  <Text style={styles.statLabel}>Active Streak</Text>
-                  <View style={styles.statTrackBg}>
-                    <View style={[styles.statTrackFill, { width: '70%', backgroundColor: '#F59E0B' }]} />
-                  </View>
-                </View>
-              </View>
-
-              {/* Card 2: Mindful Breathing */}
-              <View style={[styles.statCard, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-                <View style={styles.statCardTopRow}>
-                  <View style={[styles.statIconBox, { backgroundColor: '#D1FAE5' }]}>
-                    <Ionicons name="leaf" size={20} color="#059669" />
-                  </View>
-                  <View style={[styles.statMiniTag, { backgroundColor: '#D1FAE5' }]}>
-                    <Text style={[styles.statMiniTagText, { color: '#047857' }]}>🧘 12 Cycles</Text>
-                  </View>
-                </View>
-                <View style={styles.statCardBottom}>
-                  <Text style={[styles.statNumber, { color: '#065F46' }]}>48 Mins</Text>
-                  <Text style={styles.statLabel}>Mindful Breathing</Text>
-                  <View style={styles.statTrackBg}>
-                    <View style={[styles.statTrackFill, { width: '85%', backgroundColor: '#10B981' }]} />
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            {/* Row 2: Mood Check-ins (Rose) & Target Pace (Purple) */}
-            <View style={styles.statsRow}>
-              {/* Card 3: Mood Check-ins */}
-              <View style={[styles.statCard, { backgroundColor: '#FDF2F8', borderColor: '#FBCFE8' }]}>
-                <View style={styles.statCardTopRow}>
-                  <View style={[styles.statIconBox, { backgroundColor: '#FCE7F3' }]}>
-                    <Ionicons name="happy" size={20} color="#DB2777" />
-                  </View>
-                  <View style={[styles.statMiniTag, { backgroundColor: '#FCE7F3' }]}>
-                    <Text style={[styles.statMiniTagText, { color: '#BE185D' }]}>😊 High Rhythm</Text>
-                  </View>
-                </View>
-                <View style={styles.statCardBottom}>
-                  <Text style={[styles.statNumber, { color: '#9D174D' }]}>24 Logs</Text>
-                  <Text style={styles.statLabel}>Mood Check-ins</Text>
-                  <View style={styles.statTrackBg}>
-                    <View style={[styles.statTrackFill, { width: '90%', backgroundColor: '#EC4899' }]} />
-                  </View>
-                </View>
-              </View>
-
-              {/* Card 4: Target Pace */}
-              <View style={[styles.statCard, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
-                <View style={styles.statCardTopRow}>
-                  <View style={[styles.statIconBox, { backgroundColor: '#EDE9FE' }]}>
-                    <Ionicons name="timer" size={20} color="#7C3AED" />
-                  </View>
-                  <View style={[styles.statMiniTag, { backgroundColor: '#EDE9FE' }]}>
-                    <Text style={[styles.statMiniTagText, { color: '#6D28D9' }]}>🎯 80% Today</Text>
-                  </View>
-                </View>
-                <View style={styles.statCardBottom}>
-                  <Text style={[styles.statNumber, { color: '#5B21B6' }]}>{dailyGoal}m / Day</Text>
-                  <Text style={styles.statLabel}>Target Pace</Text>
-                  <View style={styles.statTrackBg}>
-                    <View style={[styles.statTrackFill, { width: '80%', backgroundColor: '#8B5CF6' }]} />
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* SECTION: DAILY MINDFULNESS GOAL SELECTOR */}
-        <View style={styles.sectionArea}>
-          <View style={styles.cardBlock}>
-            <View style={styles.goalHeaderRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.cardBlockTitle}>Daily Mindfulness Target</Text>
-                <Text style={styles.cardBlockDesc}>
-                  Dedicate a few calm minutes each day for 4-7-8 breathing and mindful grounding.
+                <Text style={[styles.statBadge, { color: '#B45309', backgroundColor: '#FEF3C7' }]}>
+                  🔥 Best 14d
                 </Text>
               </View>
-              <View style={styles.goalBadgeActive}>
-                <Ionicons name="trophy" size={14} color="#D97706" />
-                <Text style={styles.goalBadgeActiveText}>{dailyGoal} Mins</Text>
-              </View>
+              <Text style={[styles.statValue, { color: '#92400E' }]}>7 Days</Text>
+              <Text style={styles.statLabel}>Calm Streak</Text>
             </View>
 
-            {/* Goal Pills */}
-            <View style={styles.goalPillsRow}>
-              {GOAL_OPTIONS.map((mins) => {
-                const isActive = dailyGoal === mins;
-                return (
-                  <TouchableOpacity
-                    key={mins}
+            {/* Breathing */}
+            <View style={[styles.statCard, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
+              <View style={styles.statTop}>
+                <View style={[styles.statIconWrap, { backgroundColor: '#D1FAE5' }]}>
+                  <Ionicons name="leaf" size={15} color="#059669" />
+                </View>
+                <Text style={[styles.statBadge, { color: '#047857', backgroundColor: '#D1FAE5' }]}>
+                  🧘 12 Sessions
+                </Text>
+              </View>
+              <Text style={[styles.statValue, { color: '#065F46' }]}>48 Mins</Text>
+              <Text style={styles.statLabel}>Breathe Time</Text>
+            </View>
+
+            {/* Reflections */}
+            <View style={[styles.statCard, { backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' }]}>
+              <View style={styles.statTop}>
+                <View style={[styles.statIconWrap, { backgroundColor: '#DBEAFE' }]}>
+                  <Ionicons name="journal" size={15} color="#2563EB" />
+                </View>
+                <Text style={[styles.statBadge, { color: '#1D4ED8', backgroundColor: '#DBEAFE' }]}>
+                  ✨ Weekly
+                </Text>
+              </View>
+              <Text style={[styles.statValue, { color: '#1E40AF' }]}>16 Entries</Text>
+              <Text style={styles.statLabel}>Reflections</Text>
+            </View>
+
+            {/* Daily Goal */}
+            <View style={[styles.statCard, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
+              <View style={styles.statTop}>
+                <View style={[styles.statIconWrap, { backgroundColor: '#EDE9FE' }]}>
+                  <Ionicons name="timer" size={15} color="#7C3AED" />
+                </View>
+                <Text style={[styles.statBadge, { color: '#6D28D9', backgroundColor: '#EDE9FE' }]}>
+                  🎯 Active
+                </Text>
+              </View>
+              <Text style={[styles.statValue, { color: '#5B21B6' }]}>{dailyGoal}m / Day</Text>
+              <Text style={styles.statLabel}>Daily Target</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* DAILY GOAL SELECTOR */}
+        <View style={styles.cardSection}>
+          <View style={styles.cardHeaderRow}>
+            <View>
+              <Text style={styles.cardTitle}>Mindfulness Goal</Text>
+              <Text style={styles.cardSubtitle}>
+                Target conscious minutes spent per day
+              </Text>
+            </View>
+            <View style={styles.goalActivePill}>
+              <Ionicons name="timer-outline" size={12} color="#059669" />
+              <Text style={styles.goalActivePillText}>{dailyGoal} Mins</Text>
+            </View>
+          </View>
+
+          <View style={styles.goalPillsRow}>
+            {GOAL_OPTIONS.map((mins) => {
+              const isSelected = dailyGoal === mins;
+              return (
+                <TouchableOpacity
+                  key={mins}
+                  style={[
+                    styles.goalPill,
+                    isSelected && styles.goalPillSelected,
+                  ]}
+                  onPress={() => {
+                    setDailyGoal(mins);
+                    if (updateUser) updateUser({ dailyGoal: mins });
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Text
                     style={[
-                      styles.goalPill,
-                      isActive && styles.goalPillSelected,
+                      styles.goalPillText,
+                      isSelected && styles.goalPillTextSelected,
                     ]}
-                    onPress={() => setDailyGoal(mins)}
-                    activeOpacity={0.7}
                   >
-                    <Text
-                      style={[
-                        styles.goalPillText,
-                        isActive && styles.goalPillTextSelected,
-                      ]}
-                    >
-                      {mins}m
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
-        </View>
-
-        {/* SECTION: AI COMPANION & MEMORY */}
-        <View style={styles.sectionArea}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionHeaderLeft}>
-              <Ionicons name="color-wand" size={18} color="#8B5CF6" />
-              <Text style={styles.sectionTitle}>AI Companion & Memory</Text>
-            </View>
-            <View style={styles.adaptiveBadge}>
-              <Text style={styles.adaptiveBadgeText}>Adaptive AI</Text>
-            </View>
-          </View>
-
-          <View style={styles.cardBlock}>
-            <View style={styles.switchRow}>
-              <View style={{ flex: 1, paddingRight: 16 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={styles.settingMainTitle}>Personalized Memory</Text>
-                  <View style={styles.activePillTag}>
-                    <Text style={styles.activePillTagText}>Active</Text>
-                  </View>
-                </View>
-                <Text style={styles.cardBlockDesc}>
-                  Maya remembers your reflections, preferred breathing rhythms, and mood patterns.
-                </Text>
-              </View>
-              <Switch
-                value={memoryEnabled}
-                onValueChange={setMemoryEnabled}
-                trackColor={{ false: '#E2E8F0', true: '#10B981' }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            {/* Impressions list */}
-            {memoryEnabled && (
-              <View style={styles.memoryContainer}>
-                <View style={styles.memoryContainerHeader}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Ionicons name="layers" size={15} color="#6366F1" />
-                    <Text style={styles.memoryContainerTitle}>
-                      {' '}Stored Impressions ({memories.length})
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => setIsAddingMemory(!isAddingMemory)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.addImpressionLink}>
-                      {isAddingMemory ? 'Cancel' : '+ Add Note'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* Add Custom Impression Input */}
-                {isAddingMemory && (
-                  <View style={styles.addMemoryInputArea}>
-                    <TextInput
-                      style={styles.addMemoryInput}
-                      placeholder="e.g. Prefer soft chimes before evening sleep"
-                      placeholderTextColor="#94A3B8"
-                      value={newMemoryInput}
-                      onChangeText={setNewMemoryInput}
-                    />
-                    <TouchableOpacity
-                      style={styles.addMemorySaveBtn}
-                      onPress={handleAddMemory}
-                      activeOpacity={0.8}
-                    >
-                      <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                      <Text style={styles.addMemorySaveBtnText}>Save</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-
-                {memories.map((m) => (
-                  <View key={m.id} style={styles.memoryItemCard}>
-                    <View style={styles.memoryDotIndicator} />
-                    <Text style={styles.memoryItemText} numberOfLines={2}>
-                      {m.text}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => removeMemory(m.id)}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    >
-                      <Ionicons name="close-circle" size={18} color="#CBD5E1" />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-
-                <View style={styles.clearMemoryFooter}>
-                  <Text style={styles.clearMemoryHint}>Start fresh with Maya anytime?</Text>
-                  <TouchableOpacity
-                    style={styles.clearMemoryBtn}
-                    onPress={handleClearAllMemories}
-                    activeOpacity={0.7}
-                  >
-                    <Ionicons name="trash-outline" size={14} color="#EF4444" />
-                    <Text style={styles.clearMemoryBtnText}>Clear Memories</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-          </View>
-        </View>
-
-        {/* SECTION: GENTLE CADENCE & NOTIFICATIONS */}
-        <View style={styles.sectionArea}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionHeaderLeft}>
-              <Ionicons name="notifications" size={18} color="#F59E0B" />
-              <Text style={styles.sectionTitle}>Gentle Cadence & Alarms</Text>
-            </View>
-          </View>
-
-          <View style={styles.cardBlock}>
-            {/* Morning Chime */}
-            <View style={styles.switchRow}>
-              <View style={styles.switchIconLeft}>
-                <View style={[styles.cadenceIconBubble, { backgroundColor: '#FEF3C7' }]}>
-                  <Ionicons name="sunny" size={18} color="#D97706" />
-                </View>
-                <View style={{ flex: 1, paddingRight: 8 }}>
-                  <Text style={styles.settingMainTitle}>Morning Awakening</Text>
-                  <Text style={styles.cardBlockDesc}>Gentle chime & positive prompt at 8:30 AM</Text>
-                </View>
-              </View>
-              <Switch
-                value={morningEnabled}
-                onValueChange={setMorningEnabled}
-                trackColor={{ false: '#E2E8F0', true: '#F59E0B' }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingDivider} />
-
-            {/* Evening Sanctuary */}
-            <View style={styles.switchRow}>
-              <View style={styles.switchIconLeft}>
-                <View style={[styles.cadenceIconBubble, { backgroundColor: '#EDE9FE' }]}>
-                  <Ionicons name="moon" size={18} color="#7C3AED" />
-                </View>
-                <View style={{ flex: 1, paddingRight: 8 }}>
-                  <Text style={styles.settingMainTitle}>Evening Sanctuary</Text>
-                  <Text style={styles.cardBlockDesc}>4-7-8 breathing unwind reminder at 9:00 PM</Text>
-                </View>
-              </View>
-              <Switch
-                value={eveningEnabled}
-                onValueChange={setEveningEnabled}
-                trackColor={{ false: '#E2E8F0', true: '#8B5CF6' }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingDivider} />
-
-            {/* Weekly Digest */}
-            <View style={styles.switchRow}>
-              <View style={styles.switchIconLeft}>
-                <View style={[styles.cadenceIconBubble, { backgroundColor: '#E0F2FE' }]}>
-                  <Ionicons name="mail" size={18} color="#0284C7" />
-                </View>
-                <View style={{ flex: 1, paddingRight: 8 }}>
-                  <Text style={styles.settingMainTitle}>Weekly Rhythm Summary</Text>
-                  <Text style={styles.cardBlockDesc}>Sunday emotional insights & progress metrics</Text>
-                </View>
-              </View>
-              <Switch
-                value={digestEnabled}
-                onValueChange={setDigestEnabled}
-                trackColor={{ false: '#E2E8F0', true: '#0EA5E9' }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-          </View>
-        </View>
-
-        {/* SECTION: PRIVACY & DATA SECURITY */}
-        <View style={styles.sectionArea}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionHeaderLeft}>
-              <Ionicons name="shield-checkmark" size={18} color="#10B981" />
-              <Text style={styles.sectionTitle}>Privacy & Emotional Data</Text>
-            </View>
-          </View>
-
-          <View style={styles.cardBlock}>
-            {/* Biometric Lock */}
-            <View style={styles.switchRow}>
-              <View style={styles.switchIconLeft}>
-                <View style={[styles.cadenceIconBubble, { backgroundColor: '#D1FAE5' }]}>
-                  <Ionicons name="finger-print" size={18} color="#059669" />
-                </View>
-                <View style={{ flex: 1, paddingRight: 8 }}>
-                  <Text style={styles.settingMainTitle}>Local Biometric Vault</Text>
-                  <Text style={styles.cardBlockDesc}>Require Face ID / Fingerprint to open journals</Text>
-                </View>
-              </View>
-              <Switch
-                value={biometricEnabled}
-                onValueChange={setBiometricEnabled}
-                trackColor={{ false: '#E2E8F0', true: '#10B981' }}
-                thumbColor="#FFFFFF"
-              />
-            </View>
-
-            <View style={styles.settingDivider} />
-
-            {/* Download Archive */}
-            <TouchableOpacity
-              style={styles.clickableOptionRow}
-              onPress={handleExportArchive}
-              activeOpacity={0.7}
-            >
-              <View style={styles.switchIconLeft}>
-                <View style={[styles.cadenceIconBubble, { backgroundColor: '#F1F5F9' }]}>
-                  <Ionicons name="cloud-download-outline" size={18} color="#475569" />
-                </View>
-                <View style={{ flex: 1, paddingRight: 8 }}>
-                  <Text style={styles.settingMainTitle}>Export Personal Archive</Text>
-                  <Text style={styles.cardBlockDesc}>Download encrypted reflections (GDPR/CCPA)</Text>
-                </View>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
-            </TouchableOpacity>
-
-            <View style={styles.settingDivider} />
-
-            {/* Erase Account */}
-            <TouchableOpacity
-              style={styles.clickableOptionRow}
-              onPress={() => {
-                Alert.alert(
-                  'Erase Emotional Trail',
-                  'This action permanently wipes your local reflections and data. Are you sure?',
-                  [
-                    { text: 'Cancel', style: 'cancel' },
-                    { text: 'Permanently Erase', style: 'destructive', onPress: () => Alert.alert('Trail Erased', 'Your records have been cleared.') },
-                  ]
-                );
-              }}
-              activeOpacity={0.7}
-            >
-              <View style={styles.switchIconLeft}>
-                <View style={[styles.cadenceIconBubble, { backgroundColor: '#FEE2E2' }]}>
-                  <Ionicons name="trash" size={18} color="#DC2626" />
-                </View>
-                <View style={{ flex: 1, paddingRight: 8 }}>
-                  <Text style={[styles.settingMainTitle, { color: '#DC2626' }]}>
-                    Erase Account & Sanctuary Data
+                    {mins}m
                   </Text>
-                  <Text style={styles.cardBlockDesc}>Irrevocable erasure of all logs</Text>
-                </View>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color="#EF4444" />
-            </TouchableOpacity>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
-        {/* SIGN OUT & FOOTER */}
-        <View style={styles.footerSection}>
+        {/* CADENCE & NOTIFICATIONS */}
+        <View style={styles.cardSection}>
+          <Text style={styles.cardTitle}>Daily Cadence & Reminders</Text>
+
+          {/* Morning reminder */}
+          <View style={styles.settingRow}>
+            <View style={[styles.settingIconWrap, { backgroundColor: '#FEF3C7' }]}>
+              <Ionicons name="sunny" size={16} color="#D97706" />
+            </View>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Morning Awakening</Text>
+              <Text style={styles.settingDesc}>Mindful prompt & gratitude at 8:30 AM</Text>
+            </View>
+            <Switch
+              value={morningEnabled}
+              onValueChange={setMorningEnabled}
+              trackColor={{ false: '#E2E8F0', true: '#7A9A8B' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          <View style={styles.settingDivider} />
+
+          {/* Evening reminder */}
+          <View style={styles.settingRow}>
+            <View style={[styles.settingIconWrap, { backgroundColor: '#EDE9FE' }]}>
+              <Ionicons name="moon" size={16} color="#7C3AED" />
+            </View>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Evening Wind-Down</Text>
+              <Text style={styles.settingDesc}>4-7-8 breathing unwind at 9:00 PM</Text>
+            </View>
+            <Switch
+              value={eveningEnabled}
+              onValueChange={setEveningEnabled}
+              trackColor={{ false: '#E2E8F0', true: '#7A9A8B' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          <View style={styles.settingDivider} />
+
+          {/* Audio Chimes */}
+          <View style={styles.settingRow}>
+            <View style={[styles.settingIconWrap, { backgroundColor: '#ECFDF5' }]}>
+              <Ionicons name="volume-medium" size={16} color="#059669" />
+            </View>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Breathing Chimes & Audio</Text>
+              <Text style={styles.settingDesc}>Gentle bowl bowls during inhale & exhale</Text>
+            </View>
+            <Switch
+              value={audioSounds}
+              onValueChange={setAudioSounds}
+              trackColor={{ false: '#E2E8F0', true: '#7A9A8B' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+        </View>
+
+        {/* SECURITY & PRIVACY */}
+        <View style={styles.cardSection}>
+          <Text style={styles.cardTitle}>Privacy & Sanctuary Data</Text>
+
+          {/* Biometrics */}
+          <View style={styles.settingRow}>
+            <View style={[styles.settingIconWrap, { backgroundColor: '#E0F2FE' }]}>
+              <Ionicons name="finger-print" size={16} color="#0284C7" />
+            </View>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Local Biometric Lock</Text>
+              <Text style={styles.settingDesc}>Require Face ID to view reflections</Text>
+            </View>
+            <Switch
+              value={biometricEnabled}
+              onValueChange={setBiometricEnabled}
+              trackColor={{ false: '#E2E8F0', true: '#7A9A8B' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          <View style={styles.settingDivider} />
+
+          {/* Export reflections */}
           <TouchableOpacity
-            style={styles.signOutButton}
-            onPress={handleSignOut}
-            activeOpacity={0.8}
+            style={styles.actionRow}
+            onPress={() =>
+              Alert.alert(
+                'Personal Archive',
+                'Your journal entries and breathing history have been exported securely.'
+              )
+            }
+            activeOpacity={0.7}
           >
-            <Ionicons name="log-out-outline" size={18} color="#EF4444" />
-            <Text style={styles.signOutButtonText}>Sign Out of Sanctuary</Text>
+            <View style={[styles.settingIconWrap, { backgroundColor: '#F1F5F9' }]}>
+              <Ionicons name="cloud-download-outline" size={16} color="#475569" />
+            </View>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>Export Personal Data</Text>
+              <Text style={styles.settingDesc}>Download encrypted JSON journal archive</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
+          </TouchableOpacity>
+        </View>
+
+        {/* SUPPORT & ACTIONS */}
+        <View style={styles.cardSection}>
+          {/* Crisis support */}
+          <TouchableOpacity
+            style={styles.actionRow}
+            onPress={() => navigation.navigate('CrisisSupport')}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.settingIconWrap, { backgroundColor: '#FEE2E2' }]}>
+              <Ionicons name="heart-circle" size={17} color="#DC2626" />
+            </View>
+            <View style={styles.settingInfo}>
+              <Text style={[styles.settingTitle, { color: '#DC2626' }]}>
+                Immediate Crisis Helpline
+              </Text>
+              <Text style={styles.settingDesc}>24/7 confidential free emotional support</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#DC2626" />
           </TouchableOpacity>
 
-          <Text style={styles.footerVersionNotice}>
-            MINDFUL AI • Version 3.5.0 • Sanctuary Build
-          </Text>
-          <Text style={styles.footerSecurityNotice}>
-            🔒 Protected by Zero-Knowledge Encryption Architecture
-          </Text>
+          <View style={styles.settingDivider} />
+
+          {/* Sign Out */}
+          <TouchableOpacity
+            style={styles.actionRow}
+            onPress={handleSignOut}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.settingIconWrap, { backgroundColor: '#F3F4F6' }]}>
+              <Ionicons name="log-out-outline" size={16} color="#4B5563" />
+            </View>
+            <View style={styles.settingInfo}>
+              <Text style={[styles.settingTitle, { color: '#4B5563' }]}>
+                Sign Out of MindFul
+              </Text>
+              <Text style={styles.settingDesc}>Return to the sanctuary entrance</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Footer info */}
+        <View style={styles.footerWrap}>
+          <Text style={styles.footerVersion}>MINDFUL • VERSION 3.5</Text>
+          <Text style={styles.footerSub}>🔒 Private, Local & Mindfully Designed</Text>
         </View>
       </ScrollView>
 
@@ -709,9 +488,9 @@ export default function ProfileScreen({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.modalOverlay}
         >
-          <View style={styles.modalCard}>
+          <View style={styles.modalContent}>
             {/* Modal Header */}
-            <View style={styles.modalHeaderRow}>
+            <View style={styles.modalHeader}>
               <View>
                 <Text style={styles.modalTitle}>Edit Profile</Text>
                 <Text style={styles.modalSubtitle}>Customize your sanctuary identity</Text>
@@ -721,33 +500,33 @@ export default function ProfileScreen({ navigation }) {
                 onPress={() => setIsEditModalVisible(false)}
                 activeOpacity={0.7}
               >
-                <Ionicons name="close" size={20} color="#475569" />
+                <Ionicons name="close" size={18} color="#64748B" />
               </TouchableOpacity>
             </View>
 
             <ScrollView
-              contentContainerStyle={styles.modalScrollContent}
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.modalScroll}
             >
-              {/* Choose Avatar */}
-              <Text style={styles.inputSectionLabel}>Choose Your Avatar</Text>
-              <View style={styles.avatarPickerRow}>
+              {/* Avatar Selector */}
+              <Text style={styles.inputLabel}>Choose Your Avatar</Text>
+              <View style={styles.avatarRow}>
                 {AVATAR_OPTIONS.map((item) => {
                   const isSelected = tempAvatar === item.uri;
                   return (
                     <TouchableOpacity
                       key={item.id}
                       style={[
-                        styles.avatarChoiceBtn,
-                        isSelected && styles.avatarChoiceBtnSelected,
+                        styles.avatarOption,
+                        isSelected && styles.avatarOptionSelected,
                       ]}
                       onPress={() => setTempAvatar(item.uri)}
                       activeOpacity={0.8}
                     >
-                      <Image source={{ uri: item.uri }} style={styles.avatarChoiceImg} />
+                      <Image source={{ uri: item.uri }} style={styles.avatarOptionImg} />
                       {isSelected && (
-                        <View style={styles.avatarCheckBadge}>
-                          <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                        <View style={styles.avatarCheck}>
+                          <Ionicons name="checkmark" size={10} color="#FFFFFF" />
                         </View>
                       )}
                     </TouchableOpacity>
@@ -755,12 +534,12 @@ export default function ProfileScreen({ navigation }) {
                 })}
               </View>
 
-              {/* Full Name Input */}
-              <Text style={styles.inputSectionLabel}>Your Name</Text>
-              <View style={styles.textInputContainer}>
-                <Ionicons name="person-outline" size={18} color="#6366F1" style={styles.inputIcon} />
+              {/* Name Field */}
+              <Text style={styles.inputLabel}>Your Name</Text>
+              <View style={styles.inputWrap}>
+                <Ionicons name="person-outline" size={15} color="#059669" />
                 <TextInput
-                  style={styles.textInputField}
+                  style={styles.inputField}
                   value={tempName}
                   onChangeText={setTempName}
                   placeholder="Enter your name"
@@ -768,23 +547,23 @@ export default function ProfileScreen({ navigation }) {
                 />
               </View>
 
-              {/* Sanctuary Bio / Intention */}
-              <Text style={styles.inputSectionLabel}>Personal Intention / Bio</Text>
-              <View style={[styles.textInputContainer, { height: 80, alignItems: 'flex-start', paddingTop: 10 }]}>
-                <Ionicons name="heart-outline" size={18} color="#EC4899" style={[styles.inputIcon, { marginTop: 2 }]} />
+              {/* Bio / Daily Intention */}
+              <Text style={styles.inputLabel}>Sanctuary Intention</Text>
+              <View style={[styles.inputWrap, { height: 74, alignItems: 'flex-start', paddingTop: 8 }]}>
+                <Ionicons name="heart-outline" size={15} color="#D97706" style={{ marginTop: 2 }} />
                 <TextInput
-                  style={[styles.textInputField, { height: 60, textAlignVertical: 'top' }]}
+                  style={[styles.inputField, { height: 56, textAlignVertical: 'top' }]}
                   value={tempBio}
                   onChangeText={setTempBio}
                   placeholder="What brings you to your sanctuary today?"
                   placeholderTextColor="#94A3B8"
-                  multiline={true}
-                  numberOfLines={3}
+                  multiline
+                  numberOfLines={2}
                 />
               </View>
 
-              {/* Daily Target Goal */}
-              <Text style={styles.inputSectionLabel}>Daily Mindfulness Target</Text>
+              {/* Daily Target in Modal */}
+              <Text style={styles.inputLabel}>Daily Mindfulness Target</Text>
               <View style={styles.modalGoalRow}>
                 {GOAL_OPTIONS.map((mins) => {
                   const isSelected = tempGoal === mins;
@@ -811,14 +590,14 @@ export default function ProfileScreen({ navigation }) {
                 })}
               </View>
 
-              {/* Action Buttons */}
-              <View style={styles.modalActionButtonsRow}>
+              {/* Modal Buttons */}
+              <View style={styles.modalBtnRow}>
                 <TouchableOpacity
                   style={styles.modalCancelBtn}
                   onPress={() => setIsEditModalVisible(false)}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.modalCancelBtnText}>Cancel</Text>
+                  <Text style={styles.modalCancelText}>Cancel</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -826,8 +605,8 @@ export default function ProfileScreen({ navigation }) {
                   onPress={handleSaveProfile}
                   activeOpacity={0.8}
                 >
-                  <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-                  <Text style={styles.modalSaveBtnText}>Save Changes</Text>
+                  <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
+                  <Text style={styles.modalSaveText}>Save</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -841,824 +620,516 @@ export default function ProfileScreen({ navigation }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAF9F6',
   },
 
-  /* Header Bar */
+  /* Header */
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.gutter,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.sm,
+    paddingHorizontal: 16,
+    paddingTop: 6,
+    paddingBottom: 10,
   },
-  headerLeft: {
-    flex: 1,
-  },
-  brandBadge: {
+  brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     marginBottom: 2,
   },
-  brandBadgeText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
+  brandTag: {
     fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.8,
     color: '#059669',
-    letterSpacing: 1.2,
   },
   headerTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: typography.sizes.headlineLg,
-    color: colors.textMain,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  sosBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FEE2E2',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: radius.pill,
-    gap: 4,
-  },
-  sosBtnText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelSm,
-    color: '#DC2626',
+    fontSize: 20,
     fontWeight: '700',
+    color: '#1C2541',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sosButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FEE2E2',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+  },
+  sosButtonText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#EF4444',
   },
 
+  /* Scroll container */
   scrollContent: {
-    paddingHorizontal: spacing.gutter,
-    paddingBottom: spacing.xl * 2,
+    paddingHorizontal: 16,
+    paddingBottom: 36,
   },
 
   /* Hero Identity Card */
-  identityHeroCard: {
+  heroCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: radius.xl,
-    padding: spacing.md,
-    marginTop: spacing.xs,
-    marginBottom: spacing.md,
-    borderWidth: 1.5,
-    borderColor: '#EEF2F6',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
-    shadowRadius: 14,
-    elevation: 4,
+    borderRadius: 18,
+    padding: 14,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  identityTopRow: {
+  heroTopRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
-  avatarWrapper: {
+  avatarContainer: {
     position: 'relative',
-    marginRight: 14,
+    marginRight: 12,
   },
-  avatarImg: {
-    width: 82,
-    height: 82,
-    borderRadius: 41,
+  avatarImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#E2E8F0',
-    borderWidth: 2.5,
-    borderColor: '#EEF2FF',
   },
-  avatarPresencePulse: {
-    position: 'absolute',
-    top: 2,
-    right: 2,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: '#10B981',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-  },
-  avatarEditPencil: {
+  avatarPencilBadge: {
     position: 'absolute',
     bottom: -2,
     right: -2,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#6366F1',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#059669',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 3,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
-  identityDetails: {
+  heroUserInfo: {
     flex: 1,
-    paddingTop: 2,
   },
-  badgeRow: {
+  memberTagRow: {
+    flexDirection: 'row',
+    marginBottom: 3,
+  },
+  memberTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
-  },
-  memberTierBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#D1FAE5',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: radius.pill,
     gap: 3,
-  },
-  memberTierText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
-    color: '#065F46',
-    fontWeight: '700',
-  },
-  statusPill: {
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 7,
+    backgroundColor: '#ECFDF5',
     paddingVertical: 2,
-    borderRadius: radius.pill,
+    paddingHorizontal: 6,
+    borderRadius: 8,
   },
-  statusPillText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 9,
-    color: '#4F46E5',
-  },
-  userNameText: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: typography.sizes.headlineMd,
-    color: colors.textMain,
-    lineHeight: 28,
-  },
-  userEmailText: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: typography.sizes.bodySm,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-  editProfileButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: radius.pill,
-    marginTop: 8,
-    gap: 4,
-  },
-  editProfileButtonText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11,
-    color: '#4F46E5',
-    fontWeight: '700',
-  },
-
-  /* Intention Card */
-  intentionCard: {
-    backgroundColor: '#FFFBEB',
-    borderRadius: radius.lg,
-    padding: 12,
-    marginTop: 14,
-    borderWidth: 1,
-    borderColor: '#FEF3C7',
-  },
-  intentionHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    marginBottom: 4,
-  },
-  intentionLabel: {
-    fontFamily: typography.fontFamily.sansSemiBold,
+  memberTagText: {
     fontSize: 10,
-    color: '#D97706',
-    letterSpacing: 0.8,
+    fontWeight: '600',
+    color: '#059669',
   },
-  intentionQuoteText: {
-    fontFamily: typography.fontFamily.serifRegular,
-    fontSize: typography.sizes.bodySm,
-    color: '#78350F',
-    lineHeight: 20,
-    fontStyle: 'italic',
-  },
-
-  /* Maya Sync Bar */
-  companionSyncRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#F5F3FF',
-    borderRadius: radius.lg,
-    padding: 12,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#EDE9FE',
-  },
-  companionSyncLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  companionSyncIconBox: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#EDE9FE',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  companionSyncTitle: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelMd,
-    color: '#4C1D95',
-  },
-  companionSyncSubtitle: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11,
-    color: '#6D28D9',
-  },
-  syncScorePill: {
-    backgroundColor: '#DDD6FE',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: radius.pill,
-  },
-  syncScoreText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11,
-    color: '#4C1D95',
+  userName: {
+    fontSize: 16,
     fontWeight: '700',
+    color: '#1C2541',
   },
-
-  /* Sections Common */
-  sectionArea: {
-    marginBottom: spacing.md,
-  },
-  sectionHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.xs,
-    paddingHorizontal: 2,
-  },
-  sectionHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  sectionTitle: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.headlineSm,
-    color: colors.textMain,
-  },
-  sectionSubBadge: {
-    fontFamily: typography.fontFamily.sansRegular,
+  userEmail: {
     fontSize: 11,
-    color: colors.textMuted,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  editBtnSmall: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#ECFDF5',
+    paddingVertical: 5,
+    paddingHorizontal: 9,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  editBtnSmallText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#059669',
+  },
+  bioContainer: {
+    marginTop: 12,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+  },
+  bioHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 3,
+  },
+  bioLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    color: '#D97706',
+  },
+  bioText: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    color: '#475569',
+    lineHeight: 16,
   },
 
-  /* Stats Grid */
-  statsContainer: {
-    gap: 12,
-    marginTop: 6,
+  /* Journey Stats */
+  statsSection: {
+    marginBottom: 14,
   },
-  statsRow: {
+  sectionHeaderTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1C2541',
+    marginBottom: 8,
+    marginLeft: 2,
+  },
+  statsGrid: {
     flexDirection: 'row',
-    gap: 12,
+    flexWrap: 'wrap',
+    gap: 8,
   },
   statCard: {
-    flex: 1,
-    borderRadius: radius.xl,
-    padding: 13,
-    borderWidth: 1.5,
-    minHeight: 136,
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
+    width: '48.5%',
+    borderRadius: 14,
+    padding: 11,
+    borderWidth: 1,
   },
-  statCardTopRow: {
+  statTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
-  statIconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  statIconWrap: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  statMiniTag: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: radius.pill,
-  },
-  statMiniTagText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
+  statBadge: {
+    fontSize: 9,
     fontWeight: '700',
+    paddingVertical: 2,
+    paddingHorizontal: 5,
+    borderRadius: 6,
   },
-  statCardBottom: {
-    marginTop: 2,
-  },
-  statNumber: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 20,
-    fontWeight: '800',
-    letterSpacing: -0.3,
+  statValue: {
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 1,
   },
   statLabel: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-  statTrackBg: {
-    width: '100%',
-    height: 4,
-    backgroundColor: 'rgba(0, 0, 0, 0.06)',
-    borderRadius: 2,
-    marginTop: 8,
-    overflow: 'hidden',
-  },
-  statTrackFill: {
-    height: '100%',
-    borderRadius: 2,
+    fontSize: 10,
+    fontWeight: '500',
+    color: '#64748B',
   },
 
-  /* Common Card Block */
-  cardBlock: {
+  /* Card Section */
+  cardSection: {
     backgroundColor: '#FFFFFF',
-    borderRadius: radius.xl,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  cardBlockTitle: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelLg,
-    color: colors.textMain,
-  },
-  cardBlockDesc: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: typography.sizes.bodySm,
-    color: colors.textMuted,
-    marginTop: 3,
-    lineHeight: 18,
-  },
-
-  /* Goal Selector */
-  goalHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
+    borderRadius: 16,
+    padding: 14,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
   },
-  goalBadgeActive: {
+  cardHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  cardTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1C2541',
+  },
+  cardSubtitle: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  goalActivePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: radius.pill,
-    gap: 4,
+    gap: 3,
+    backgroundColor: '#ECFDF5',
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
   },
-  goalBadgeActiveText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
+  goalActivePillText: {
     fontSize: 11,
-    color: '#B45309',
     fontWeight: '700',
+    color: '#059669',
   },
   goalPillsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 8,
+    gap: 6,
+    marginTop: 4,
   },
   goalPill: {
     flex: 1,
-    paddingVertical: 9,
     alignItems: 'center',
-    borderRadius: radius.lg,
+    justifyContent: 'center',
+    paddingVertical: 7,
+    borderRadius: 10,
     backgroundColor: '#F8FAFC',
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   goalPillSelected: {
-    backgroundColor: '#6366F1',
-    borderColor: '#6366F1',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
-    elevation: 3,
+    backgroundColor: '#7A9A8B',
+    borderColor: '#7A9A8B',
   },
   goalPillText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 12,
-    color: colors.textMuted,
+    fontWeight: '600',
+    color: '#64748B',
   },
   goalPillTextSelected: {
     color: '#FFFFFF',
     fontWeight: '700',
   },
 
-  /* Companion Memory */
-  adaptiveBadge: {
-    backgroundColor: '#EDE9FE',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: radius.pill,
-  },
-  adaptiveBadgeText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
-    color: '#6D28D9',
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  settingMainTitle: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelLg,
-    color: colors.textMain,
-  },
-  activePillTag: {
-    backgroundColor: '#D1FAE5',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: radius.pill,
-    marginLeft: 6,
-  },
-  activePillTagText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
-    color: '#065F46',
-  },
-  memoryContainer: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: radius.lg,
-    padding: 12,
-    marginTop: 14,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  memoryContainerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  memoryContainerTitle: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 12,
-    color: colors.textMain,
-  },
-  addImpressionLink: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11,
-    color: '#6366F1',
-  },
-  addMemoryInputArea: {
+  /* Setting row */
+  settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 10,
+    paddingVertical: 8,
   },
-  addMemoryInput: {
-    flex: 1,
-    height: 38,
-    backgroundColor: '#FFFFFF',
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    paddingHorizontal: 10,
-    fontSize: 12,
-    fontFamily: typography.fontFamily.sansRegular,
-    color: colors.textMain,
-  },
-  addMemorySaveBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#6366F1',
-    paddingHorizontal: 12,
-    height: 38,
-    borderRadius: radius.md,
-    gap: 4,
-  },
-  addMemorySaveBtnText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 12,
-    color: '#FFFFFF',
-  },
-  memoryItemCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: 10,
-    borderRadius: radius.md,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#F1F5F9',
-  },
-  memoryDotIndicator: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#6366F1',
-    marginRight: 8,
-  },
-  memoryItemText: {
-    flex: 1,
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 12,
-    color: colors.textMain,
-    lineHeight: 17,
-  },
-  clearMemoryFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 4,
-    paddingTop: 6,
-  },
-  clearMemoryHint: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11,
-    color: colors.textMuted,
-  },
-  clearMemoryBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingVertical: 2,
-    paddingHorizontal: 6,
-  },
-  clearMemoryBtnText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11,
-    color: '#EF4444',
-  },
-
-  /* Cadence & Privacy Common */
-  switchIconLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  cadenceIconBubble: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  settingIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 10,
+  },
+  settingInfo: {
+    flex: 1,
+    paddingRight: 8,
+  },
+  settingTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#1C2541',
+  },
+  settingDesc: {
+    fontSize: 10,
+    color: '#64748B',
+    marginTop: 1,
   },
   settingDivider: {
     height: 1,
     backgroundColor: '#F1F5F9',
-    marginVertical: 12,
+    marginVertical: 4,
   },
-  clickableOptionRow: {
+  actionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    paddingVertical: 8,
   },
 
-  /* Footer & Sign Out */
-  footerSection: {
-    marginTop: spacing.sm,
+  /* Footer */
+  footerWrap: {
     alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 16,
   },
-  signOutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FEE2E2',
-    width: '100%',
-    height: 50,
-    borderRadius: radius.xl,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: '#FECACA',
-  },
-  signOutButtonText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelLg,
-    color: '#DC2626',
+  footerVersion: {
+    fontSize: 9,
     fontWeight: '700',
+    letterSpacing: 0.8,
+    color: '#94A3B8',
   },
-  footerVersionNotice: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11,
-    color: colors.textMuted,
-    marginTop: 14,
-  },
-  footerSecurityNotice: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11,
-    color: '#059669',
-    marginTop: 4,
+  footerSub: {
+    fontSize: 10,
+    color: '#94A3B8',
+    marginTop: 2,
   },
 
-  /* Edit Profile Modal */
+  /* Modal */
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'flex-end',
   },
-  modalCard: {
+  modalContent: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: radius.xl * 1.2,
-    borderTopRightRadius: radius.xl * 1.2,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+    padding: 18,
     maxHeight: '85%',
-    paddingHorizontal: spacing.gutter,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl,
   },
-  modalHeaderRow: {
+  modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 12,
+    marginBottom: 14,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
   },
   modalTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: typography.sizes.headlineMd,
-    color: colors.textMain,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1C2541',
   },
   modalSubtitle: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 2,
+    fontSize: 11,
+    color: '#64748B',
   },
   modalCloseBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  modalScrollContent: {
-    paddingVertical: spacing.md,
+  modalScroll: {
+    paddingBottom: 20,
   },
-  inputSectionLabel: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 12,
-    color: colors.textMain,
-    marginBottom: 8,
-    marginTop: 12,
+  inputLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#334155',
+    marginBottom: 6,
+    marginTop: 10,
   },
-
-  /* Avatar Picker */
-  avatarPickerRow: {
+  avatarRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: 8,
   },
-  avatarChoiceBtn: {
+  avatarOption: {
     position: 'relative',
-    borderRadius: 24,
-    padding: 2,
-    borderWidth: 2.5,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    borderWidth: 2,
     borderColor: 'transparent',
+    overflow: 'hidden',
   },
-  avatarChoiceBtnSelected: {
-    borderColor: '#6366F1',
+  avatarOptionSelected: {
+    borderColor: '#059669',
   },
-  avatarChoiceImg: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#E2E8F0',
+  avatarOptionImg: {
+    width: '100%',
+    height: '100%',
   },
-  avatarCheckBadge: {
+  avatarCheck: {
     position: 'absolute',
-    top: -2,
-    right: -2,
-    backgroundColor: '#6366F1',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    bottom: 0,
+    right: 0,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#059669',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
   },
-
-  /* Text Inputs */
-  textInputContainer: {
+  inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
     backgroundColor: '#F8FAFC',
-    borderWidth: 1.5,
+    borderRadius: 12,
+    borderWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: radius.lg,
     paddingHorizontal: 12,
-    height: 48,
+    height: 42,
   },
-  inputIcon: {
-    marginRight: 8,
-  },
-  textInputField: {
+  inputField: {
     flex: 1,
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: typography.sizes.bodySm,
-    color: colors.textMain,
+    fontSize: 12,
+    color: '#1C2541',
   },
-
-  /* Modal Goal Selector */
   modalGoalRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-    marginBottom: 8,
+    gap: 6,
+    marginBottom: 16,
   },
   modalGoalPill: {
     flex: 1,
-    paddingVertical: 8,
     alignItems: 'center',
-    borderRadius: radius.md,
+    justifyContent: 'center',
+    paddingVertical: 7,
+    borderRadius: 10,
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   modalGoalPillSelected: {
-    backgroundColor: '#6366F1',
-    borderColor: '#6366F1',
+    backgroundColor: '#7A9A8B',
+    borderColor: '#7A9A8B',
   },
   modalGoalPillText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 12,
-    color: colors.textMuted,
+    fontWeight: '600',
+    color: '#64748B',
   },
   modalGoalPillTextSelected: {
     color: '#FFFFFF',
     fontWeight: '700',
   },
-
-  /* Modal Action Buttons */
-  modalActionButtonsRow: {
+  modalBtnRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 24,
+    gap: 10,
+    marginTop: 6,
   },
   modalCancelBtn: {
     flex: 1,
-    height: 48,
-    borderRadius: radius.lg,
+    paddingVertical: 10,
+    borderRadius: 12,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  modalCancelBtnText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelLg,
-    color: colors.textMuted,
+  modalCancelText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#64748B',
   },
   modalSaveBtn: {
-    flex: 2,
-    height: 48,
-    borderRadius: radius.lg,
-    backgroundColor: '#6366F1',
+    flex: 1,
     flexDirection: 'row',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: '#7A9A8B',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
   },
-  modalSaveBtnText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelLg,
-    color: '#FFFFFF',
+  modalSaveText: {
+    fontSize: 13,
     fontWeight: '700',
+    color: '#FFFFFF',
   },
 });

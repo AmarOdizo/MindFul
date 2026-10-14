@@ -9,8 +9,9 @@ import {
   Modal,
   ActivityIndicator,
   Alert,
+  Share,
+  KeyboardAvoidingView,
   Platform,
-  Share
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,101 +19,109 @@ import { colors, spacing, typography, radius } from '../theme';
 import { journalApi } from '../services/api';
 
 // =============================================================
-// CATEGORIES & COLOR PALETTES
+// CATEGORIES & MOODS CONFIGURATION
 // =============================================================
 const CATEGORIES = [
-  { id: 'All Entries', label: 'All', icon: 'apps-outline', color: '#7A9A8B', bg: '#F4F7F5', border: '#D1DDD6' },
+  { id: 'All Entries', label: 'All', icon: 'apps-outline', color: '#059669', bg: '#ECFDF5', border: '#A7F3D0' },
+  { id: 'Gratitude', label: 'Gratitude', icon: 'sparkles-outline', color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
   { id: 'Reflective', label: 'Reflective', icon: 'leaf-outline', color: '#059669', bg: '#ECFDF5', border: '#A7F3D0' },
-  { id: 'Gratitude', label: 'Gratitude', icon: 'sunny-outline', color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
-  { id: 'Peaceful', label: 'Peaceful', icon: 'heart-outline', color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
-  { id: 'Grounded', label: 'Grounded', icon: 'earth-outline', color: '#0D9488', bg: '#F0FDFA', border: '#99F6E4' },
-  { id: 'Unburdening', label: 'Unburdening', icon: 'cloud-outline', color: '#2563EB', bg: '#EFF6FF', border: '#BFDBFE' },
+  { id: 'Peaceful', label: 'Peaceful', icon: 'flower-outline', color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
+  { id: 'Unburdening', label: 'Release', icon: 'cloud-outline', color: '#2563EB', bg: '#EFF6FF', border: '#BFDBFE' },
 ];
 
 const MOOD_TAGS = [
-  { id: 'calm', label: 'Calm', emoji: '😌', color: '#10B981', bg: '#ECFDF5' },
-  { id: 'grateful', label: 'Grateful', emoji: '✨', color: '#F59E0B', bg: '#FFFBEB' },
-  { id: 'reflective', label: 'Reflective', emoji: '💭', color: '#6366F1', bg: '#EEF2FF' },
-  { id: 'peaceful', label: 'Peaceful', emoji: '🌸', color: '#EC4899', bg: '#FDF2F8' },
-  { id: 'vulnerable', label: 'Vulnerable', emoji: '🌧️', color: '#64748B', bg: '#F1F5F9' },
-  { id: 'centered', label: 'Centered', emoji: '🌿', color: '#059669', bg: '#ECFDF5' },
+  { id: 'calm', label: 'Calm', emoji: '😌', color: '#059669', bg: '#ECFDF5' },
+  { id: 'grateful', label: 'Grateful', emoji: '✨', color: '#D97706', bg: '#FFFBEB' },
+  { id: 'peaceful', label: 'Peaceful', emoji: '🌸', color: '#7C3AED', bg: '#F5F3FF' },
+  { id: 'reflective', label: 'Reflective', emoji: '💭', color: '#2563EB', bg: '#EFF6FF' },
+  { id: 'vulnerable', label: 'Heavy', emoji: '🌧️', color: '#475569', bg: '#F1F5F9' },
+  { id: 'centered', label: 'Centered', emoji: '🌿', color: '#0D9488', bg: '#F0FDFA' },
 ];
 
-const PROMPTS = [
+// 4 Sleek Quick Inspiration Cards
+const QUICK_TEMPLATES = [
   {
-    id: '1',
-    title: 'Small Ordinary Miracles',
-    category: 'Gratitude',
-    icon: 'sunny',
-    text: 'What three tiny, ordinary things went quietly right today that you can smile about?',
-    accentColor: '#D97706',
-    bgColor: '#FFFBEB',
-    borderColor: '#FDE68A',
-    badge: 'Gratitude Spark'
-  },
-  {
-    id: '2',
-    title: 'Body & Breath Whispers',
-    category: 'Peaceful',
-    icon: 'leaf',
-    text: 'Close your eyes. Where are you holding tension, and what is your body asking for right now?',
-    accentColor: '#059669',
-    bgColor: '#ECFDF5',
-    borderColor: '#A7F3D0',
-    badge: 'Somatic Check-in'
-  },
-  {
-    id: '3',
-    title: 'Unburdening The Mind',
-    category: 'Unburdening',
-    icon: 'cloud',
-    text: 'Write down whatever feels messy, unfair, or heavy right now. Give yourself permission to let it go.',
-    accentColor: '#2563EB',
-    bgColor: '#EFF6FF',
-    borderColor: '#BFDBFE',
-    badge: 'Mental Release'
-  },
-  {
-    id: '4',
-    title: 'Letter to Future Self',
+    id: 'free',
+    title: 'Free Note',
+    subtitle: 'Open thoughts',
+    icon: 'create-outline',
     category: 'Reflective',
-    icon: 'mail',
-    text: 'Write a compassionate, unhurried letter reminding yourself of your quiet strength and resilience.',
-    accentColor: '#7C3AED',
-    bgColor: '#F5F3FF',
-    borderColor: '#DDD6FE',
-    badge: 'Perspective'
+    mood: 'calm',
+    color: '#059669',
+    bg: '#ECFDF5',
+    border: '#A7F3D0',
+    promptTitle: '',
+    promptContent: '',
+  },
+  {
+    id: 'gratitude',
+    title: 'Gratitude',
+    subtitle: '3 good things',
+    icon: 'sparkles-outline',
+    category: 'Gratitude',
+    mood: 'grateful',
+    color: '#D97706',
+    bg: '#FFFBEB',
+    border: '#FDE68A',
+    promptTitle: 'Three Small Joys Today',
+    promptContent: '1. \n2. \n3. ',
+  },
+  {
+    id: 'reflection',
+    title: 'Check-in',
+    subtitle: 'Mind & body',
+    icon: 'leaf-outline',
+    category: 'Peaceful',
+    mood: 'peaceful',
+    color: '#7C3AED',
+    bg: '#F5F3FF',
+    border: '#DDD6FE',
+    promptTitle: 'Midday Heart Check-in',
+    promptContent: 'How is my energy feeling right now?\nWhat tension can I gently release?',
+  },
+  {
+    id: 'unburden',
+    title: 'Release',
+    subtitle: 'Let it go',
+    icon: 'cloud-outline',
+    category: 'Unburdening',
+    mood: 'vulnerable',
+    color: '#2563EB',
+    bg: '#EFF6FF',
+    border: '#BFDBFE',
+    promptTitle: 'Unloading My Mind',
+    promptContent: 'Whatever feels heavy, messy, or unfair right now...',
   },
 ];
 
 const DEFAULT_ENTRIES = [
   {
     id: 'sample-1',
-    title: 'Finding quiet among the project storm',
-    content: 'Woke up with racing thoughts about the quarterly presentation. Maya suggested taking three physiological sighs before opening my inbox. It completely shifted my morning from panic to calm intention.',
+    title: 'Morning pause and quiet coffee',
+    content: 'Took three deep physiological sighs before opening my inbox. It completely shifted my morning from rush to grounded presence.',
     category: 'Reflective',
     mood_tag: 'calm',
-    created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
     isSample: true,
   },
   {
     id: 'sample-2',
-    title: 'A warm cup of mint tea and morning sunshine',
-    content: 'Sat on the porch for ten uninterrupted minutes. Noticed the golden sunlight filtering through the maple leaves. Sometimes the softest moments are the ones that save our day.',
+    title: 'Three things that brought ease today',
+    content: '1. The morning sun hitting the kitchen floor.\n2. A kind check-in text from an old friend.\n3. The relief of finishing a big task.',
     category: 'Gratitude',
     mood_tag: 'grateful',
-    created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
+    created_at: new Date(Date.now() - 3600000 * 22).toISOString(),
     isSample: true,
   },
   {
     id: 'sample-3',
-    title: 'Letting go of perfectionism',
-    content: 'Reminding myself that "done" is better than "perfect". I am not responsible for solving everyone’s emotions today. My energy is sacred, and it is safe to set gentle boundaries.',
+    title: 'Letting go of being perfect',
+    content: 'Reminding myself that progress is gentle, not loud. I don’t have to solve everything today. Just taking the next simple step.',
     category: 'Unburdening',
     mood_tag: 'centered',
     created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
     isSample: true,
-  }
+  },
 ];
 
 export default function JournalScreen() {
@@ -121,7 +130,7 @@ export default function JournalScreen() {
   const [entries, setEntries] = useState(DEFAULT_ENTRIES);
   const [loading, setLoading] = useState(false);
 
-  // Write modal state
+  // Composer Modal State
   const [isWriteModalVisible, setIsWriteModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
@@ -129,10 +138,10 @@ export default function JournalScreen() {
   const [newMoodTag, setNewMoodTag] = useState('calm');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Read full entry modal
+  // Reader Modal State
   const [selectedEntry, setSelectedEntry] = useState(null);
 
-  // Fetch entries from Supabase backend
+  // Fetch entries from Supabase / API
   const fetchEntries = async () => {
     try {
       setLoading(true);
@@ -145,7 +154,7 @@ export default function JournalScreen() {
         setEntries(res.data);
       }
     } catch (err) {
-      console.warn('Could not fetch entries from API, using default/cached:', err.message);
+      console.warn('Journal fetch notice, using cached list:', err.message);
     } finally {
       setLoading(false);
     }
@@ -155,199 +164,188 @@ export default function JournalScreen() {
     fetchEntries();
   }, [activeFilter]);
 
-  // Filtered entries locally when searching
+  // Local filtering for fast search
   const displayedEntries = useMemo(() => {
     let result = entries;
     if (activeFilter !== 'All Entries') {
-      result = result.filter(e => (e.category || '').toLowerCase() === activeFilter.toLowerCase());
+      result = result.filter((e) => (e.category || '').toLowerCase() === activeFilter.toLowerCase());
     }
     if (search.trim()) {
       const q = search.toLowerCase().trim();
-      result = result.filter(e =>
-        (e.title || '').toLowerCase().includes(q) ||
-        (e.content || '').toLowerCase().includes(q) ||
-        (e.category || '').toLowerCase().includes(q)
+      result = result.filter(
+        (e) =>
+          (e.title || '').toLowerCase().includes(q) ||
+          (e.content || '').toLowerCase().includes(q) ||
+          (e.category || '').toLowerCase().includes(q)
       );
     }
     return result;
   }, [entries, activeFilter, search]);
 
+  const handleOpenTemplate = (tpl) => {
+    setNewTitle(tpl.promptTitle);
+    setNewContent(tpl.promptContent);
+    setNewCategory(tpl.category);
+    setNewMoodTag(tpl.mood);
+    setIsWriteModalVisible(true);
+  };
+
   const handleCreateEntry = async () => {
     if (!newContent.trim() || isSubmitting) return;
     setIsSubmitting(true);
-    try {
-      const payload = {
-        title: newTitle.trim() || 'Untitled Reflection',
-        content: newContent.trim(),
-        category: newCategory,
-        mood_tag: newMoodTag,
-      };
 
+    const payload = {
+      title: newTitle.trim() || 'Daily Reflection',
+      content: newContent.trim(),
+      category: newCategory,
+      mood_tag: newMoodTag,
+    };
+
+    try {
       const res = await journalApi.createEntry(payload);
       if (res && res.data) {
-        setEntries(prev => [res.data, ...prev.filter(e => !e.isSample)]);
+        setEntries((prev) => [res.data, ...prev.filter((e) => !e.isSample)]);
       }
-      setIsWriteModalVisible(false);
-      setNewTitle('');
-      setNewContent('');
-      setNewCategory('Reflective');
-      setNewMoodTag('calm');
     } catch (err) {
-      console.warn('Failed to save journal to backend, preserving locally:', err.message);
-      // Local optimistic fallback so user never loses entry
+      // Optimistic local add so the user never loses their writing
       const localEntry = {
         id: 'local-' + Date.now().toString(),
-        title: newTitle.trim() || 'Untitled Reflection',
-        content: newContent.trim(),
-        category: newCategory,
-        mood_tag: newMoodTag,
+        ...payload,
         created_at: new Date().toISOString(),
       };
-      setEntries(prev => [localEntry, ...prev]);
+      setEntries((prev) => [localEntry, ...prev]);
+    } finally {
+      setIsSubmitting(false);
       setIsWriteModalVisible(false);
       setNewTitle('');
       setNewContent('');
       setNewCategory('Reflective');
       setNewMoodTag('calm');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleDeleteEntry = (id) => {
-    Alert.alert(
-      "Delete Reflection",
-      "Are you sure you want to remove this journal entry from your sanctuary?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            // Remove immediately from UI
-            setEntries(prev => prev.filter(e => e.id !== id));
-            if (selectedEntry && selectedEntry.id === id) {
-              setSelectedEntry(null);
-            }
-            if (!id || String(id).startsWith('sample-') || String(id).startsWith('local-')) {
-              return;
-            }
+    Alert.alert('Delete Reflection', 'Are you sure you want to remove this reflection?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          setEntries((prev) => prev.filter((e) => e.id !== id));
+          if (selectedEntry && selectedEntry.id === id) {
+            setSelectedEntry(null);
+          }
+          if (id && !String(id).startsWith('sample-') && !String(id).startsWith('local-')) {
             try {
               await journalApi.deleteEntry(id);
             } catch (err) {
               console.warn('Delete entry notice:', err.message);
             }
           }
-        }
-      ]
-    );
-  };
-
-  const openPromptComposer = (prompt) => {
-    setNewTitle(prompt.title);
-    setNewContent(`"${prompt.text}"\n\n`);
-    setNewCategory(prompt.category);
-    setIsWriteModalVisible(true);
+        },
+      },
+    ]);
   };
 
   const handleShareEntry = async (entry) => {
     try {
       await Share.share({
         title: entry.title || 'Mindful Reflection',
-        message: `"${entry.title || 'Reflection'}"\n\n${entry.content}\n\n— MindFul Sanctuary`
+        message: `"${entry.title || 'Reflection'}"\n\n${entry.content}\n\n— MindFul Journal`,
       });
     } catch (e) {}
   };
 
   const getCategoryConfig = (categoryName) => {
-    const found = CATEGORIES.find(c => (c.id || '').toLowerCase() === (categoryName || '').toLowerCase());
-    return found || CATEGORIES[1];
+    const found = CATEGORIES.find((c) => (c.id || '').toLowerCase() === (categoryName || '').toLowerCase());
+    return found || CATEGORIES[2];
   };
 
   const getMoodConfig = (moodTag) => {
-    const found = MOOD_TAGS.find(m => (m.id || '').toLowerCase() === (moodTag || '').toLowerCase());
+    const found = MOOD_TAGS.find((m) => (m.id || '').toLowerCase() === (moodTag || '').toLowerCase());
     return found || MOOD_TAGS[0];
+  };
+
+  const wordCount = (text) => {
+    if (!text || !text.trim()) return 0;
+    return text.trim().split(/\s+/).length;
   };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       {/* ========================================================= */}
-      {/* 1. COLORFUL SANCTUARY HEADER                              */}
+      {/* 1. CLEAN TOP HEADER                                       */}
       {/* ========================================================= */}
-      <View style={styles.headerBar}>
-        <View style={styles.headerLeft}>
-          <View style={styles.headerBadge}>
-            <Ionicons name="sparkles" size={11} color="#059669" />
-            <Text style={styles.headerBadgeText}>SANCTUARY JOURNAL</Text>
-          </View>
-          <Text style={styles.headerTitle}>Inner Reflections</Text>
-          <Text style={styles.headerDate}>
-            {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.headerTitle}>Journal</Text>
+          <Text style={styles.headerSubtitle}>
+            {new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} ·{' '}
+            {displayedEntries.length} {displayedEntries.length === 1 ? 'entry' : 'entries'}
           </Text>
         </View>
 
-        {/* Primary Colorful Write Button */}
+        {/* Floating / Compact New Note Button */}
         <TouchableOpacity
-          style={styles.primaryWriteBtn}
-          onPress={() => setIsWriteModalVisible(true)}
+          style={styles.newEntryBtn}
+          onPress={() => {
+            setNewTitle('');
+            setNewContent('');
+            setNewCategory('Reflective');
+            setNewMoodTag('calm');
+            setIsWriteModalVisible(true);
+          }}
           activeOpacity={0.85}
         >
-          <Ionicons name="create" size={17} color="#FFFFFF" />
-          <Text style={styles.primaryWriteBtnText}>Write</Text>
+          <Ionicons name="add" size={20} color="#FFFFFF" />
+          <Text style={styles.newEntryBtnText}>New Note</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* ========================================================= */}
-        {/* 2. COLORFUL QUICK STATS BANNER                            */}
+        {/* 2. DIVERSE QUICK COMPOSE CARDS (Visual, Minimal Text)     */}
         {/* ========================================================= */}
-        <View style={styles.statsBanner}>
-          <View style={[styles.statPill, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-            <View style={[styles.statIconBox, { backgroundColor: '#10B981' }]}>
-              <Ionicons name="book" size={14} color="#FFFFFF" />
-            </View>
-            <View>
-              <Text style={styles.statNumber}>{entries.length}</Text>
-              <Text style={styles.statLabel}>Reflections</Text>
-            </View>
-          </View>
-
-          <View style={[styles.statPill, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}>
-            <View style={[styles.statIconBox, { backgroundColor: '#F59E0B' }]}>
-              <Ionicons name="flame" size={14} color="#FFFFFF" />
-            </View>
-            <View>
-              <Text style={styles.statNumber}>4 Days</Text>
-              <Text style={styles.statLabel}>Calm Streak</Text>
-            </View>
-          </View>
-
-          <View style={[styles.statPill, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
-            <View style={[styles.statIconBox, { backgroundColor: '#8B5CF6' }]}>
-              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
-            </View>
-            <View>
-              <Text style={styles.statNumber}>100%</Text>
-              <Text style={styles.statLabel}>Private</Text>
-            </View>
-          </View>
-        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.templatesScroll}
+          contentContainerStyle={styles.templatesScrollContainer}
+        >
+          {QUICK_TEMPLATES.map((tpl) => (
+            <TouchableOpacity
+              key={tpl.id}
+              style={[styles.templateCard, { backgroundColor: tpl.bg, borderColor: tpl.border }]}
+              onPress={() => handleOpenTemplate(tpl)}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.templateIconCircle, { backgroundColor: tpl.color }]}>
+                <Ionicons name={tpl.icon} size={16} color="#FFFFFF" />
+              </View>
+              <View style={styles.templateTextContainer}>
+                <Text style={styles.templateTitle}>{tpl.title}</Text>
+                <Text style={styles.templateSubtitle}>{tpl.subtitle}</Text>
+              </View>
+              <Ionicons name="arrow-forward" size={14} color={tpl.color} style={styles.templateArrow} />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
         {/* ========================================================= */}
-        {/* 3. VIBRANT SEARCH & ACTIONS BAR                           */}
+        {/* 3. MINIMAL SEARCH BAR                                     */}
         {/* ========================================================= */}
-        <View style={styles.searchRow}>
-          <View style={styles.searchInputContainer}>
-            <Ionicons name="search" size={18} color="#059669" style={styles.searchIcon} />
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search" size={18} color="#059669" style={{ marginRight: 8 }} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search thoughts, insights, prompts..."
+              placeholder="Search thoughts & reflections..."
               placeholderTextColor="#94A3B8"
               value={search}
               onChangeText={setSearch}
             />
             {search.length > 0 && (
-              <TouchableOpacity onPress={() => setSearch('')} style={styles.clearSearchBtn}>
+              <TouchableOpacity onPress={() => setSearch('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
                 <Ionicons name="close-circle" size={18} color="#94A3B8" />
               </TouchableOpacity>
             )}
@@ -355,33 +353,33 @@ export default function JournalScreen() {
         </View>
 
         {/* ========================================================= */}
-        {/* 4. COLORFUL CATEGORY FILTER PILLS                         */}
+        {/* 4. SLEEK CATEGORY FILTER PILLS                            */}
         {/* ========================================================= */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={styles.filtersScroll}
-          contentContainerStyle={{ paddingHorizontal: spacing.gutter, gap: 8 }}
+          style={styles.filterScroll}
+          contentContainerStyle={styles.filterScrollContainer}
         >
-          {CATEGORIES.map(cat => {
-            const isActive = activeFilter === cat.id;
+          {CATEGORIES.map((cat) => {
+            const isSelected = activeFilter === cat.id;
             return (
               <TouchableOpacity
                 key={cat.id}
                 style={[
-                  styles.filterChip,
-                  { backgroundColor: isActive ? cat.color : cat.bg, borderColor: cat.border }
+                  styles.filterPill,
+                  isSelected ? { backgroundColor: cat.color, borderColor: cat.color } : { backgroundColor: '#FFFFFF' },
                 ]}
                 onPress={() => setActiveFilter(cat.id)}
                 activeOpacity={0.75}
               >
                 <Ionicons
                   name={cat.icon}
-                  size={14}
-                  color={isActive ? '#FFFFFF' : cat.color}
-                  style={{ marginRight: 5 }}
+                  size={13}
+                  color={isSelected ? '#FFFFFF' : cat.color}
+                  style={{ marginRight: 4 }}
                 />
-                <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : cat.color }]}>
+                <Text style={[styles.filterPillText, isSelected && { color: '#FFFFFF', fontWeight: '600' }]}>
                   {cat.label}
                 </Text>
               </TouchableOpacity>
@@ -389,167 +387,106 @@ export default function JournalScreen() {
           })}
         </ScrollView>
 
-        {/* ========================================================= */}
-        {/* 5. GENTLE SPARKS: COLORFUL PROMPT CARDS                   */}
-        {/* ========================================================= */}
-        <View style={styles.sectionHeader}>
-          <View style={styles.sectionHeaderLeft}>
-            <View style={styles.sectionIconBulb}>
-              <Ionicons name="bulb" size={14} color="#D97706" />
-            </View>
-            <Text style={styles.sectionTitle}>Daily Sparks & Prompts</Text>
-          </View>
-          <Text style={styles.sectionSubtitle}>Tap any to write</Text>
-        </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.promptsScroll}
-          contentContainerStyle={{ paddingHorizontal: spacing.gutter, gap: 12 }}
-        >
-          {PROMPTS.map(p => (
-            <TouchableOpacity
-              key={p.id}
-              style={[styles.promptCard, { backgroundColor: p.bgColor, borderColor: p.borderColor }]}
-              onPress={() => openPromptComposer(p)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.promptTopRow}>
-                <View style={[styles.promptBadgePill, { backgroundColor: '#FFFFFF', borderColor: p.borderColor }]}>
-                  <Text style={[styles.promptBadgeText, { color: p.accentColor }]}>{p.badge}</Text>
-                </View>
-                <View style={[styles.promptIconCircle, { backgroundColor: p.accentColor }]}>
-                  <Ionicons name={p.icon} size={13} color="#FFFFFF" />
-                </View>
-              </View>
-
-              <Text style={styles.promptCardTitle}>{p.title}</Text>
-              <Text style={styles.promptCardText} numberOfLines={3}>"{p.text}"</Text>
-
-              <View style={styles.promptCardFooter}>
-                <Text style={[styles.promptCtaText, { color: p.accentColor }]}>Reflect with Maya</Text>
-                <Ionicons name="arrow-forward" size={14} color={p.accentColor} />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        {/* Loading Spinner */}
+        {loading && <ActivityIndicator size="small" color="#059669" style={{ marginVertical: 14 }} />}
 
         {/* ========================================================= */}
-        {/* 6. SANCTUARY STREAM (JOURNAL ENTRIES LIST)                */}
+        {/* 5. CLEAN EMPTY STATE                                      */}
         {/* ========================================================= */}
-        <View style={styles.sectionHeader}>
-          <View style={styles.sectionHeaderLeft}>
-            <View style={[styles.sectionIconBulb, { backgroundColor: '#ECFDF5' }]}>
-              <Ionicons name="water" size={14} color="#059669" />
-            </View>
-            <Text style={styles.sectionTitle}>Sanctuary Stream</Text>
-          </View>
-          <Text style={styles.entryCountBadge}>
-            {displayedEntries.length} {displayedEntries.length === 1 ? 'Reflection' : 'Reflections'}
-          </Text>
-        </View>
-
-        {loading && (
-          <ActivityIndicator size="small" color={colors.primary} style={{ marginVertical: 14 }} />
-        )}
-
-        {/* Empty State */}
         {displayedEntries.length === 0 && !loading && (
-          <View style={styles.emptyStateCard}>
-            <View style={styles.emptyIconBox}>
-              <Ionicons name="leaf-outline" size={32} color="#059669" />
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIconCircle}>
+              <Ionicons name="book-outline" size={28} color="#059669" />
             </View>
-            <Text style={styles.emptyTitle}>A Pure, Empty Canvas</Text>
+            <Text style={styles.emptyTitle}>Your quiet canvas</Text>
             <Text style={styles.emptySubtitle}>
-              {search.trim()
-                ? `No reflections found matching "${search}".`
-                : `No entries in "${activeFilter}". Tap below to begin your first reflection.`}
+              {search.trim() ? `No results for "${search}"` : 'Write your first thought, feeling, or moment of gratitude.'}
             </Text>
             <TouchableOpacity
-              style={styles.emptyWriteBtn}
-              onPress={() => setIsWriteModalVisible(true)}
+              style={styles.emptyButton}
+              onPress={() => {
+                setNewTitle('');
+                setNewContent('');
+                setIsWriteModalVisible(true);
+              }}
             >
-              <Ionicons name="pencil" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-              <Text style={styles.emptyWriteBtnText}>Write a Reflection</Text>
+              <Ionicons name="pencil" size={15} color="#FFFFFF" style={{ marginRight: 6 }} />
+              <Text style={styles.emptyButtonText}>Write Reflection</Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {/* Dynamic Colorful Entry Cards */}
-        {displayedEntries.map(entry => {
+        {/* ========================================================= */}
+        {/* 6. AESTHETIC ENTRY CARDS (ALL FIELDS PRESENT)             */}
+        {/* ========================================================= */}
+        {displayedEntries.map((entry) => {
           const catConfig = getCategoryConfig(entry.category);
           const moodConfig = getMoodConfig(entry.mood_tag);
+          const words = wordCount(entry.content);
 
           return (
             <TouchableOpacity
               key={entry.id}
-              style={[styles.entryCard, { borderLeftColor: catConfig.color }]}
+              style={styles.entryCard}
               onPress={() => setSelectedEntry(entry)}
               activeOpacity={0.88}
             >
-              {/* Top Row: Date + Category Badge + Mood Tag */}
-              <View style={styles.entryTopRow}>
-                <View style={styles.entryDateBox}>
-                  <View style={[styles.pulseDot, { backgroundColor: catConfig.color }]} />
-                  <Text style={styles.entryDateText}>
-                    {entry.created_at
-                      ? new Date(entry.created_at).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })
-                      : 'Recently Recorded'}
-                  </Text>
-                </View>
-
-                <View style={styles.entryBadgesRight}>
-                  {/* Category Pill */}
-                  <View style={[styles.categoryBadge, { backgroundColor: catConfig.bg, borderColor: catConfig.border }]}>
-                    <Ionicons name={catConfig.icon} size={11} color={catConfig.color} />
-                    <Text style={[styles.categoryBadgeText, { color: catConfig.color }]}>
+              {/* Top Meta Strip: Category Tag + Mood Badge + Date */}
+              <View style={styles.entryTopBar}>
+                <View style={styles.entryTopLeft}>
+                  <View style={[styles.categoryTag, { backgroundColor: catConfig.bg, borderColor: catConfig.border }]}>
+                    <Ionicons name={catConfig.icon} size={11} color={catConfig.color} style={{ marginRight: 3 }} />
+                    <Text style={[styles.categoryTagText, { color: catConfig.color }]}>
                       {entry.category || 'Reflective'}
                     </Text>
                   </View>
 
-                  {/* Mood Pill */}
-                  <View style={[styles.moodBadge, { backgroundColor: moodConfig.bg }]}>
-                    <Text style={styles.moodEmoji}>{moodConfig.emoji}</Text>
-                    <Text style={[styles.moodText, { color: moodConfig.color }]}>{moodConfig.label}</Text>
+                  <View style={[styles.moodTag, { backgroundColor: moodConfig.bg }]}>
+                    <Text style={styles.moodTagEmoji}>{moodConfig.emoji}</Text>
+                    <Text style={[styles.moodTagText, { color: moodConfig.color }]}>{moodConfig.label}</Text>
                   </View>
                 </View>
+
+                <Text style={styles.entryDate}>
+                  {entry.created_at
+                    ? new Date(entry.created_at).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                      })
+                    : 'Recent'}
+                </Text>
               </View>
 
-              {/* Title & Body Content */}
-              <Text style={styles.entryTitle}>{entry.title || 'Untitled Reflection'}</Text>
-              <Text style={styles.entryBody} numberOfLines={3}>
+              {/* Title */}
+              <Text style={styles.entryTitle} numberOfLines={1}>
+                {entry.title || 'Daily Reflection'}
+              </Text>
+
+              {/* Snippet */}
+              <Text style={styles.entrySnippet} numberOfLines={2}>
                 {entry.content}
               </Text>
 
-              {/* Card Footer Actions */}
-              <View style={styles.entryFooterRow}>
-                <View style={styles.entryFooterLeft}>
-                  <TouchableOpacity
-                    style={styles.readMoreBtn}
-                    onPress={() => setSelectedEntry(entry)}
-                  >
-                    <Text style={[styles.readMoreText, { color: catConfig.color }]}>Read full reflection</Text>
-                    <Ionicons name="chevron-forward" size={13} color={catConfig.color} />
-                  </TouchableOpacity>
+              {/* Bottom Strip: Word Count + Quick Action Buttons */}
+              <View style={styles.entryBottomBar}>
+                <View style={styles.wordCountPill}>
+                  <Ionicons name="time-outline" size={12} color="#94A3B8" style={{ marginRight: 3 }} />
+                  <Text style={styles.wordCountText}>{words} {words === 1 ? 'word' : 'words'}</Text>
                 </View>
 
-                <View style={styles.entryFooterRight}>
+                <View style={styles.entryActions}>
                   <TouchableOpacity
-                    style={styles.footerActionIconBtn}
+                    style={styles.actionBtn}
                     onPress={() => handleShareEntry(entry)}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
-                    <Ionicons name="share-outline" size={16} color={colors.textMuted} />
+                    <Ionicons name="share-outline" size={16} color="#64748B" />
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.footerActionIconBtn, { backgroundColor: '#FEE2E2' }]}
+                    style={[styles.actionBtn, { backgroundColor: '#FEE2E2' }]}
                     onPress={() => handleDeleteEntry(entry.id)}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
                     <Ionicons name="trash-outline" size={15} color="#EF4444" />
                   </TouchableOpacity>
@@ -558,54 +495,10 @@ export default function JournalScreen() {
             </TouchableOpacity>
           );
         })}
-
-        {/* ========================================================= */}
-        {/* 7. WEEKLY EMOTIONAL WEATHER (COLORFUL CHART)              */}
-        {/* ========================================================= */}
-        <View style={styles.weeklyCard}>
-          <View style={styles.weeklyHeader}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View style={[styles.sectionIconBulb, { backgroundColor: '#F5F3FF', marginRight: 8 }]}>
-                <Ionicons name="sunny" size={16} color="#7C3AED" />
-              </View>
-              <Text style={styles.weeklyTitle}>Emotional Weather</Text>
-            </View>
-            <View style={styles.weeklyGroundedBadge}>
-              <Text style={styles.weeklyGroundedText}>🌿 Mostly Grounded</Text>
-            </View>
-          </View>
-
-          <Text style={styles.weeklyDesc}>
-            Your nervous system experienced 4 sustained moments of deep presence this week.
-          </Text>
-
-          <View style={styles.chartRow}>
-            {[
-              { l: 'Mon', h: 65, c: '#059669', emoji: '🌿' },
-              { l: 'Tue', h: 45, c: '#2563EB', emoji: '🌤️' },
-              { l: 'Wed', h: 55, c: '#7C3AED', emoji: '🌸' },
-              { l: 'Thu', h: 95, c: '#D97706', emoji: '✨' },
-              { l: 'Fri', h: 40, c: '#0D9488', emoji: '😌' },
-              { l: 'Sat', h: 80, c: '#EC4899', emoji: '💖' },
-              { l: 'Sun', h: 70, c: '#10B981', emoji: '🌱' },
-            ].map((bar, i) => (
-              <View key={i} style={styles.chartCol}>
-                <Text style={styles.chartBarEmoji}>{bar.emoji}</Text>
-                <View style={styles.chartBarTrack}>
-                  <View style={[styles.chartBarFill, { height: `${bar.h}%`, backgroundColor: bar.c }]} />
-                </View>
-                <Text style={[styles.chartDay, bar.h === 95 && { color: bar.c, fontFamily: typography.fontFamily.sansSemiBold }]}>
-                  {bar.l}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
       </ScrollView>
 
       {/* ========================================================= */}
-      {/* 8. WRITE REFLECTION MODAL (RICH & USER FRIENDLY)          */}
+      {/* 7. WRITE REFLECTION MODAL (CLEAN & COMPLETE FIELDS)       */}
       {/* ========================================================= */}
       <Modal
         visible={isWriteModalVisible}
@@ -613,48 +506,49 @@ export default function JournalScreen() {
         transparent={true}
         onRequestClose={() => setIsWriteModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalBackdrop}
+        >
+          <View style={styles.modalSheet}>
+            {/* Sheet Handle */}
+            <View style={styles.sheetHandle} />
+
             {/* Modal Header */}
             <View style={styles.modalHeader}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <View style={styles.modalHeaderIcon}>
-                  <Ionicons name="pencil" size={16} color="#059669" />
-                </View>
-                <Text style={styles.modalTitle}>New Reflection</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.modalCloseBtn}
-                onPress={() => setIsWriteModalVisible(false)}
-              >
-                <Ionicons name="close" size={20} color={colors.textMain} />
+              <Text style={styles.modalTitle}>New Reflection</Text>
+              <TouchableOpacity onPress={() => setIsWriteModalVisible(false)} style={styles.modalCloseBtn}>
+                <Ionicons name="close" size={20} color="#64748B" />
               </TouchableOpacity>
             </View>
 
-            {/* Category Selector Chips */}
-            <Text style={styles.modalSectionLabel}>CHOOSE SANCTUARY CATEGORY</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.modalCatRow}>
-              {CATEGORIES.filter(c => c.id !== 'All Entries').map(cat => {
+            {/* Field: Category Selector */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.modalPillsScroll}
+              contentContainerStyle={{ gap: 8, paddingBottom: 2 }}
+            >
+              {CATEGORIES.filter((c) => c.id !== 'All Entries').map((cat) => {
                 const isSelected = newCategory === cat.id;
                 return (
                   <TouchableOpacity
                     key={cat.id}
                     style={[
-                      styles.modalCatChip,
-                      {
-                        backgroundColor: isSelected ? cat.color : cat.bg,
-                        borderColor: cat.border,
-                      }
+                      styles.modalCategoryPill,
+                      isSelected
+                        ? { backgroundColor: cat.color, borderColor: cat.color }
+                        : { backgroundColor: cat.bg, borderColor: cat.border },
                     ]}
                     onPress={() => setNewCategory(cat.id)}
                   >
                     <Ionicons
                       name={cat.icon}
-                      size={13}
+                      size={12}
                       color={isSelected ? '#FFFFFF' : cat.color}
                       style={{ marginRight: 4 }}
                     />
-                    <Text style={[styles.modalCatText, { color: isSelected ? '#FFFFFF' : cat.color }]}>
+                    <Text style={[styles.modalCategoryText, { color: isSelected ? '#FFFFFF' : cat.color }]}>
                       {cat.label}
                     </Text>
                   </TouchableOpacity>
@@ -662,46 +556,42 @@ export default function JournalScreen() {
               })}
             </ScrollView>
 
-            {/* Mood Tag Selector */}
-            <Text style={styles.modalSectionLabel}>HOW DOES YOUR HEART FEEL?</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.modalCatRow}>
-              {MOOD_TAGS.map(m => {
+            {/* Field: Mood Selector */}
+            <View style={styles.modalMoodRow}>
+              {MOOD_TAGS.map((m) => {
                 const isSelected = newMoodTag === m.id;
                 return (
                   <TouchableOpacity
                     key={m.id}
                     style={[
-                      styles.modalMoodChip,
-                      {
-                        backgroundColor: isSelected ? m.color : m.bg,
-                        borderColor: isSelected ? m.color : '#E2E8F0'
-                      }
+                      styles.modalMoodBtn,
+                      isSelected ? { backgroundColor: m.bg, borderColor: m.color, borderWidth: 1.5 } : {},
                     ]}
                     onPress={() => setNewMoodTag(m.id)}
                   >
-                    <Text style={{ fontSize: 13, marginRight: 4 }}>{m.emoji}</Text>
-                    <Text style={[styles.modalMoodText, { color: isSelected ? '#FFFFFF' : m.color }]}>
+                    <Text style={{ fontSize: 16 }}>{m.emoji}</Text>
+                    <Text style={[styles.modalMoodBtnText, isSelected && { color: m.color, fontWeight: '700' }]}>
                       {m.label}
                     </Text>
                   </TouchableOpacity>
                 );
               })}
-            </ScrollView>
+            </View>
 
-            {/* Title Input */}
+            {/* Field: Title Input */}
             <TextInput
               style={styles.modalTitleInput}
-              placeholder="Title (e.g., A quiet revelation)"
+              placeholder="Title (optional)"
               placeholderTextColor="#94A3B8"
               value={newTitle}
               onChangeText={setNewTitle}
-              maxLength={120}
+              maxLength={100}
             />
 
-            {/* Content Input */}
+            {/* Field: Content Body Area */}
             <TextInput
               style={styles.modalContentInput}
-              placeholder="What emotions, sensations, or thoughts are alive in you? Pour them out freely without judgment..."
+              placeholder="Write your reflection, thoughts, or feelings here..."
               placeholderTextColor="#94A3B8"
               value={newContent}
               onChangeText={setNewContent}
@@ -709,38 +599,37 @@ export default function JournalScreen() {
               textAlignVertical="top"
             />
 
-            <View style={styles.modalContentFooter}>
-              <Text style={styles.wordCountText}>
-                {newContent.trim().length > 0 ? `${newContent.trim().split(/\s+/).length} words` : '0 words'}
+            {/* Modal Bottom: Word Count & Save Button */}
+            <View style={styles.modalBottomBar}>
+              <Text style={styles.modalWordCount}>
+                {newContent.trim() ? `${wordCount(newContent)} words` : '0 words'}
               </Text>
-              <Text style={styles.privacyGuarantee}>🔒 Stored confidentially</Text>
-            </View>
 
-            {/* Save Button */}
-            <TouchableOpacity
-              style={[
-                styles.modalSaveBtn,
-                (!newContent.trim() || isSubmitting) && styles.modalSaveBtnDisabled
-              ]}
-              onPress={handleCreateEntry}
-              disabled={!newContent.trim() || isSubmitting}
-              activeOpacity={0.85}
-            >
-              {isSubmitting ? (
-                <ActivityIndicator color="#FFFFFF" size="small" />
-              ) : (
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-                  <Text style={styles.modalSaveBtnText}>Save to Sanctuary</Text>
-                </View>
-              )}
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.saveBtn,
+                  (!newContent.trim() || isSubmitting) && styles.saveBtnDisabled,
+                ]}
+                onPress={handleCreateEntry}
+                disabled={!newContent.trim() || isSubmitting}
+                activeOpacity={0.85}
+              >
+                {isSubmitting ? (
+                  <ActivityIndicator color="#FFFFFF" size="small" />
+                ) : (
+                  <>
+                    <Ionicons name="checkmark" size={17} color="#FFFFFF" style={{ marginRight: 4 }} />
+                    <Text style={styles.saveBtnText}>Save</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* ========================================================= */}
-      {/* 9. READ ENTRY DETAIL MODAL (DISTRACTION-FREE VIEWER)      */}
+      {/* 8. READ FULL ENTRY MODAL (DISTRACTION-FREE)              */}
       {/* ========================================================= */}
       <Modal
         visible={!!selectedEntry}
@@ -748,68 +637,87 @@ export default function JournalScreen() {
         transparent={true}
         onRequestClose={() => setSelectedEntry(null)}
       >
-        <View style={styles.readerOverlay}>
+        <View style={styles.readerBackdrop}>
           {selectedEntry && (
-            <View style={styles.readerContainer}>
+            <View style={styles.readerSheet}>
               {/* Header */}
               <View style={styles.readerHeader}>
-                <View style={styles.readerCategoryPill}>
-                  <Ionicons
-                    name={getCategoryConfig(selectedEntry.category).icon}
-                    size={13}
-                    color={getCategoryConfig(selectedEntry.category).color}
-                    style={{ marginRight: 4 }}
-                  />
-                  <Text style={[styles.readerCategoryText, { color: getCategoryConfig(selectedEntry.category).color }]}>
-                    {selectedEntry.category || 'Reflective'}
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.readerCloseBtn}
-                  onPress={() => setSelectedEntry(null)}
-                >
-                  <Ionicons name="close" size={20} color={colors.textMain} />
-                </TouchableOpacity>
-              </View>
-
-              <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 420 }}>
-                {/* Title */}
-                <Text style={styles.readerTitle}>{selectedEntry.title || 'Untitled Reflection'}</Text>
-
-                {/* Date & Mood metadata */}
-                <View style={styles.readerMetaRow}>
-                  <Ionicons name="calendar-outline" size={13} color={colors.textMuted} />
-                  <Text style={styles.readerDateText}>
-                    {selectedEntry.created_at
-                      ? new Date(selectedEntry.created_at).toLocaleDateString(undefined, {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })
-                      : 'Recently Saved'}
-                  </Text>
-                  {selectedEntry.mood_tag && (
-                    <Text style={styles.readerMoodTagText}>
-                      · {getMoodConfig(selectedEntry.mood_tag).emoji} {getMoodConfig(selectedEntry.mood_tag).label}
+                <View style={styles.entryTopLeft}>
+                  <View
+                    style={[
+                      styles.categoryTag,
+                      {
+                        backgroundColor: getCategoryConfig(selectedEntry.category).bg,
+                        borderColor: getCategoryConfig(selectedEntry.category).border,
+                      },
+                    ]}
+                  >
+                    <Ionicons
+                      name={getCategoryConfig(selectedEntry.category).icon}
+                      size={11}
+                      color={getCategoryConfig(selectedEntry.category).color}
+                      style={{ marginRight: 3 }}
+                    />
+                    <Text
+                      style={[
+                        styles.categoryTagText,
+                        { color: getCategoryConfig(selectedEntry.category).color },
+                      ]}
+                    >
+                      {selectedEntry.category || 'Reflective'}
                     </Text>
+                  </View>
+
+                  {selectedEntry.mood_tag && (
+                    <View
+                      style={[
+                        styles.moodTag,
+                        { backgroundColor: getMoodConfig(selectedEntry.mood_tag).bg },
+                      ]}
+                    >
+                      <Text style={styles.moodTagEmoji}>{getMoodConfig(selectedEntry.mood_tag).emoji}</Text>
+                      <Text
+                        style={[
+                          styles.moodTagText,
+                          { color: getMoodConfig(selectedEntry.mood_tag).color },
+                        ]}
+                      >
+                        {getMoodConfig(selectedEntry.mood_tag).label}
+                      </Text>
+                    </View>
                   )}
                 </View>
 
-                {/* Content */}
-                <Text style={styles.readerBodyText}>{selectedEntry.content}</Text>
+                <TouchableOpacity onPress={() => setSelectedEntry(null)} style={styles.modalCloseBtn}>
+                  <Ionicons name="close" size={20} color="#64748B" />
+                </TouchableOpacity>
+              </View>
+
+              {/* Title & Date */}
+              <Text style={styles.readerTitle}>{selectedEntry.title || 'Daily Reflection'}</Text>
+              <Text style={styles.readerDate}>
+                {selectedEntry.created_at
+                  ? new Date(selectedEntry.created_at).toLocaleDateString(undefined, {
+                      weekday: 'long',
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : 'Recent entry'}
+              </Text>
+
+              {/* Content Body */}
+              <ScrollView showsVerticalScrollIndicator={false} style={styles.readerBodyScroll}>
+                <Text style={styles.readerContentText}>{selectedEntry.content}</Text>
               </ScrollView>
 
-              {/* Reader Footer Buttons */}
-              <View style={styles.readerFooter}>
+              {/* Reader Action Bar */}
+              <View style={styles.readerActionBar}>
                 <TouchableOpacity
                   style={styles.readerShareBtn}
                   onPress={() => handleShareEntry(selectedEntry)}
                 >
-                  <Ionicons name="share-social-outline" size={16} color={colors.textMain} />
+                  <Ionicons name="share-outline" size={16} color="#1E293B" style={{ marginRight: 6 }} />
                   <Text style={styles.readerShareText}>Share</Text>
                 </TouchableOpacity>
 
@@ -817,7 +725,7 @@ export default function JournalScreen() {
                   style={styles.readerDeleteBtn}
                   onPress={() => handleDeleteEntry(selectedEntry.id)}
                 >
-                  <Ionicons name="trash-outline" size={16} color="#EF4444" />
+                  <Ionicons name="trash-outline" size={16} color="#EF4444" style={{ marginRight: 6 }} />
                   <Text style={styles.readerDeleteText}>Delete</Text>
                 </TouchableOpacity>
               </View>
@@ -830,423 +738,179 @@ export default function JournalScreen() {
 }
 
 // =============================================================
-// COLORFUL & MODERN STYLESHEET
+// CLEAN & SLEEK STYLESHEET
 // =============================================================
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAF9F6',
+    backgroundColor: '#F8FAF9',
   },
 
-  /* --- 1. HEADER --- */
-  headerBar: {
+  /* 1. Header */
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.gutter,
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.sm,
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 14,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(122, 154, 139, 0.12)',
-  },
-  headerLeft: {
-    flex: 1,
-  },
-  headerBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: radius.pill,
-    gap: 4,
-    marginBottom: 2,
-  },
-  headerBadgeText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
-    color: '#059669',
-    letterSpacing: 0.8,
+    borderBottomColor: '#F1F5F9',
   },
   headerTitle: {
     fontFamily: typography.fontFamily.serifMedium,
-    fontSize: 24,
-    color: colors.textMain,
+    fontSize: 26,
+    color: '#0F172A',
+    fontWeight: '700',
   },
-  headerDate: {
+  headerSubtitle: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 1,
+    fontSize: 12.5,
+    color: '#64748B',
+    marginTop: 2,
   },
-  primaryWriteBtn: {
+  newEntryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#059669',
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 9,
     borderRadius: radius.pill,
     shadowColor: '#059669',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
-    shadowRadius: 6,
+    shadowRadius: 5,
     elevation: 3,
-    gap: 5,
   },
-  primaryWriteBtnText: {
+  newEntryBtnText: {
     fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 13.5,
     color: '#FFFFFF',
+    marginLeft: 4,
   },
 
-  container: {
-    paddingBottom: spacing.xl * 2,
+  scrollContent: {
+    paddingBottom: 100,
   },
 
-  /* --- 2. STATS BANNER --- */
-  statsBanner: {
-    flexDirection: 'row',
-    marginHorizontal: spacing.gutter,
-    marginTop: spacing.md,
-    marginBottom: spacing.sm,
+  /* 2. Quick Templates Carousel */
+  templatesScroll: {
+    marginTop: 14,
+    marginBottom: 10,
+    flexGrow: 0,
+  },
+  templatesScrollContainer: {
+    paddingHorizontal: 20,
     gap: 10,
   },
-  statPill: {
-    flex: 1,
+  templateCard: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     borderRadius: radius.lg,
     borderWidth: 1,
-    gap: 8,
+    minWidth: 148,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 3,
+    elevation: 1,
   },
-  statIconBox: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+  templateIconCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 8,
   },
-  statNumber: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: 15,
-    color: colors.textMain,
-    lineHeight: 18,
+  templateTextContainer: {
+    flex: 1,
   },
-  statLabel: {
+  templateTitle: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 13,
+    color: '#0F172A',
+  },
+  templateSubtitle: {
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 10.5,
-    color: colors.textMuted,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  templateArrow: {
+    marginLeft: 6,
   },
 
-  /* --- 3. SEARCH --- */
-  searchRow: {
-    marginHorizontal: spacing.gutter,
-    marginTop: spacing.sm,
-    marginBottom: spacing.sm,
+  /* 3. Search Bar */
+  searchContainer: {
+    paddingHorizontal: 20,
+    marginTop: 6,
+    marginBottom: 8,
   },
-  searchInputContainer: {
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: radius.xl,
+    borderRadius: radius.pill,
     paddingHorizontal: 14,
-    height: 46,
+    height: 42,
     borderWidth: 1,
-    borderColor: 'rgba(122, 154, 139, 0.22)',
-    shadowColor: '#1C2541',
-    shadowOffset: { width: 0, height: 2 },
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.03,
-    shadowRadius: 5,
+    shadowRadius: 3,
     elevation: 1,
-  },
-  searchIcon: {
-    marginRight: 8,
   },
   searchInput: {
     flex: 1,
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 13.5,
-    color: colors.textMain,
-  },
-  clearSearchBtn: {
-    padding: 4,
+    color: '#0F172A',
   },
 
-  /* --- 4. CATEGORY FILTERS --- */
-  filtersScroll: {
-    marginVertical: spacing.sm,
+  /* 4. Filter Pills */
+  filterScroll: {
+    marginVertical: 6,
     flexGrow: 0,
   },
-  filterChip: {
+  filterScrollContainer: {
+    paddingHorizontal: 20,
+    gap: 8,
+  },
+  filterPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 7,
+    paddingHorizontal: 13,
+    paddingVertical: 6,
     borderRadius: radius.pill,
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.02,
-    shadowRadius: 3,
-    elevation: 1,
+    borderColor: '#E2E8F0',
   },
-  filterChipText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
+  filterPillText: {
+    fontFamily: typography.fontFamily.sansRegular,
     fontSize: 12,
+    color: '#64748B',
   },
 
-  /* --- 5. SECTION HEADERS --- */
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginHorizontal: spacing.gutter,
-    marginTop: spacing.md,
-    marginBottom: spacing.xs,
-  },
-  sectionHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  sectionIconBulb: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: '#FEF3C7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sectionTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: 17,
-    color: colors.textMain,
-  },
-  sectionSubtitle: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11.5,
-    color: colors.textMuted,
-  },
-  entryCountBadge: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11,
-    color: '#059669',
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: '#A7F3D0',
-  },
-
-  /* --- GENTLE SPARKS (PROMPTS) --- */
-  promptsScroll: {
-    marginTop: spacing.xs,
-    marginBottom: spacing.md,
-    flexGrow: 0,
-  },
-  promptCard: {
-    width: 270,
-    borderRadius: radius.xl,
-    padding: 14,
-    borderWidth: 1.5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
-    justifyContent: 'space-between',
-  },
-  promptTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  promptBadgePill: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-  },
-  promptBadgeText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
-    letterSpacing: 0.3,
-  },
-  promptIconCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  promptCardTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: 15,
-    color: colors.textMain,
-    marginBottom: 4,
-  },
-  promptCardText: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 12.5,
-    color: colors.textMuted,
-    lineHeight: 18,
-    marginBottom: 10,
-  },
-  promptCardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: 4,
-  },
-  promptCtaText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11.5,
-  },
-
-  /* --- 6. SANCTUARY STREAM (ENTRY CARDS) --- */
-  entryCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: radius.lg,
-    padding: 16,
-    marginHorizontal: spacing.gutter,
-    marginTop: spacing.sm,
-    marginBottom: spacing.xs,
-    borderLeftWidth: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(122, 154, 139, 0.15)',
-    shadowColor: '#1C2541',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  entryTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  entryDateBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  pulseDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
-  },
-  entryDateText: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11.5,
-    color: colors.textMuted,
-  },
-  entryBadgesRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  categoryBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 2.5,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    gap: 4,
-  },
-  categoryBadgeText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10.5,
-  },
-  moodBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: radius.pill,
-    gap: 3,
-  },
-  moodEmoji: {
-    fontSize: 11,
-  },
-  moodText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
-  },
-  entryTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: 17,
-    color: colors.textMain,
-    marginBottom: 4,
-  },
-  entryBody: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 13.5,
-    color: '#475569',
-    lineHeight: 20,
-    marginBottom: 10,
-  },
-  entryFooterRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-    paddingTop: 8,
-  },
-  entryFooterLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  readMoreBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-  },
-  readMoreText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11.5,
-  },
-  entryFooterRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  footerActionIconBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#F8FAFC',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  /* --- EMPTY STATE --- */
-  emptyStateCard: {
+  /* 5. Empty State */
+  emptyCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: radius.xl,
-    padding: 24,
-    marginHorizontal: spacing.gutter,
-    marginTop: spacing.md,
+    padding: 28,
+    marginHorizontal: 20,
+    marginTop: 20,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(122, 154, 139, 0.18)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
+    borderColor: '#E2E8F0',
   },
-  emptyIconBox: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+  emptyIconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: '#ECFDF5',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1255,269 +919,276 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontFamily: typography.fontFamily.serifMedium,
     fontSize: 18,
-    color: colors.textMain,
-    marginBottom: 4,
+    color: '#0F172A',
+    fontWeight: '600',
   },
   emptySubtitle: {
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 13,
-    color: colors.textMuted,
+    color: '#64748B',
     textAlign: 'center',
-    lineHeight: 19,
+    marginTop: 4,
     marginBottom: 16,
   },
-  emptyWriteBtn: {
+  emptyButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#059669',
     paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingVertical: 9,
     borderRadius: radius.pill,
   },
-  emptyWriteBtnText: {
+  emptyButtonText: {
     fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 13,
     color: '#FFFFFF',
   },
 
-  /* --- 7. WEEKLY EMOTIONAL WEATHER --- */
-  weeklyCard: {
+  /* 6. Entry Card */
+  entryCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: radius.xl,
-    padding: 16,
-    marginHorizontal: spacing.gutter,
-    marginTop: spacing.lg,
+    borderRadius: radius.lg,
+    padding: 15,
+    marginHorizontal: 20,
+    marginTop: 10,
     borderWidth: 1,
-    borderColor: 'rgba(122, 154, 139, 0.16)',
-    shadowColor: '#1C2541',
-    shadowOffset: { width: 0, height: 4 },
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
   },
-  weeklyHeader: {
+  entryTopBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 8,
   },
-  weeklyTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: 16.5,
-    color: colors.textMain,
+  entryTopLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
-  weeklyGroundedBadge: {
-    backgroundColor: '#ECFDF5',
+  categoryTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 2.5,
     borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: '#A7F3D0',
   },
-  weeklyGroundedText: {
+  categoryTagText: {
     fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 10.5,
-    color: '#059669',
   },
-  weeklyDesc: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 12,
-    color: colors.textMuted,
-    marginBottom: 16,
-  },
-  chartRow: {
+  moodTag: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    height: 110,
-    paddingTop: 8,
-  },
-  chartCol: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    height: '100%',
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
+    borderRadius: radius.pill,
   },
-  chartBarEmoji: {
-    fontSize: 12,
+  moodTagEmoji: {
+    fontSize: 10.5,
+    marginRight: 3,
+  },
+  moodTagText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 10.5,
+  },
+  entryDate: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11.5,
+    color: '#94A3B8',
+  },
+  entryTitle: {
+    fontFamily: typography.fontFamily.serifMedium,
+    fontSize: 16.5,
+    color: '#0F172A',
+    fontWeight: '600',
     marginBottom: 4,
   },
-  chartBarTrack: {
-    width: 22,
-    height: 65,
-    backgroundColor: '#F1F5F9',
-    borderRadius: 11,
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-  },
-  chartBarFill: {
-    width: '100%',
-    borderRadius: 11,
-  },
-  chartDay: {
+  entrySnippet: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11,
-    color: colors.textMuted,
-    marginTop: 6,
+    fontSize: 13,
+    color: '#475569',
+    lineHeight: 18.5,
+    marginBottom: 10,
+  },
+  entryBottomBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#F8FAFC',
+    paddingTop: 8,
+  },
+  wordCountPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  wordCountText: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11.5,
+    color: '#94A3B8',
+  },
+  entryActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  actionBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#F1F5F9',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
-  /* --- 8. WRITE MODAL --- */
-  modalOverlay: {
+  /* 7. Composer Modal */
+  modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.55)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'flex-end',
   },
-  modalContainer: {
+  modalSheet: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: spacing.gutter,
-    paddingTop: 18,
-    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
-    maxHeight: '92%',
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 36 : 20,
+    maxHeight: '90%',
+  },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#CBD5E1',
+    alignSelf: 'center',
+    marginBottom: 10,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 14,
-  },
-  modalHeaderIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#ECFDF5',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 12,
   },
   modalTitle: {
     fontFamily: typography.fontFamily.serifMedium,
     fontSize: 19,
-    color: colors.textMain,
+    color: '#0F172A',
+    fontWeight: '700',
   },
   modalCloseBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#F1F5F9',
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 4,
   },
-  modalSectionLabel: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
-    color: colors.textMuted,
-    letterSpacing: 0.7,
-    marginTop: 6,
-    marginBottom: 6,
-  },
-  modalCatRow: {
-    flexDirection: 'row',
-    flexGrow: 0,
+  modalPillsScroll: {
     marginBottom: 10,
+    flexGrow: 0,
   },
-  modalCatChip: {
+  modalCategoryPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    marginRight: 8,
-  },
-  modalCatText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11.5,
-  },
-  modalMoodChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 11,
     paddingVertical: 5,
     borderRadius: radius.pill,
     borderWidth: 1,
-    marginRight: 8,
   },
-  modalMoodText: {
+  modalCategoryText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11,
+    fontSize: 11.5,
+  },
+  modalMoodRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  modalMoodBtn: {
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 7,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    minWidth: 46,
+  },
+  modalMoodBtnText: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 9.5,
+    color: '#64748B',
+    marginTop: 2,
   },
   modalTitleInput: {
-    fontFamily: typography.fontFamily.serifMedium,
-    fontSize: 17,
-    color: colors.textMain,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-    paddingVertical: 8,
-    marginTop: 6,
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 15,
+    color: '#0F172A',
+    backgroundColor: '#F8FAFC',
+    borderRadius: radius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     marginBottom: 10,
   },
   modalContentInput: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 14.5,
-    color: colors.textMain,
-    minHeight: 130,
-    maxHeight: 200,
+    fontSize: 14,
+    color: '#0F172A',
     backgroundColor: '#F8FAFC',
     borderRadius: radius.md,
-    padding: 12,
-    lineHeight: 22,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: '#E2E8F0',
+    minHeight: 140,
+    maxHeight: 220,
+    lineHeight: 21,
+    marginBottom: 12,
   },
-  modalContentFooter: {
+  modalBottomBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 6,
-    marginBottom: 14,
   },
-  wordCountText: {
+  modalWordCount: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11,
-    color: colors.textMuted,
+    fontSize: 12,
+    color: '#94A3B8',
   },
-  privacyGuarantee: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 11,
-    color: '#059669',
-  },
-  modalSaveBtn: {
-    backgroundColor: '#059669',
-    borderRadius: radius.pill,
-    paddingVertical: 14,
+  saveBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#059669',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    backgroundColor: '#059669',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: radius.pill,
   },
-  modalSaveBtnDisabled: {
-    opacity: 0.5,
+  saveBtnDisabled: {
+    backgroundColor: '#94A3B8',
+    opacity: 0.7,
   },
-  modalSaveBtnText: {
-    color: '#FFFFFF',
+  saveBtnText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 14.5,
+    fontSize: 13.5,
+    color: '#FFFFFF',
   },
 
-  /* --- 9. READER MODAL --- */
-  readerOverlay: {
+  /* 8. Reader Modal */
+  readerBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.gutter,
+    paddingHorizontal: 20,
   },
-  readerContainer: {
-    width: '100%',
+  readerSheet: {
     backgroundColor: '#FFFFFF',
     borderRadius: radius.xl,
     padding: 20,
     maxHeight: '80%',
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.15,
     shadowRadius: 20,
@@ -1527,97 +1198,63 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
-  },
-  readerCategoryPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  readerCategoryText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11,
-  },
-  readerCloseBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#F1F5F9',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 10,
   },
   readerTitle: {
     fontFamily: typography.fontFamily.serifMedium,
     fontSize: 21,
-    color: colors.textMain,
-    marginBottom: 6,
-    lineHeight: 28,
+    color: '#0F172A',
+    fontWeight: '700',
+    marginBottom: 2,
   },
-  readerMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  readerDate: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 12,
+    color: '#64748B',
+    marginBottom: 14,
+  },
+  readerBodyScroll: {
+    maxHeight: 280,
     marginBottom: 16,
-    gap: 4,
   },
-  readerDateText: {
+  readerContentText: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  readerMoodTagText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 12,
-    color: colors.textMain,
-  },
-  readerBodyText: {
-    fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 15,
+    fontSize: 14.5,
     color: '#334155',
-    lineHeight: 25,
-    marginBottom: 16,
+    lineHeight: 23,
   },
-  readerFooter: {
+  readerActionBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
-    paddingTop: 14,
-    marginTop: 8,
+    paddingTop: 12,
   },
   readerShareBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: radius.pill,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    backgroundColor: '#F1F5F9',
   },
   readerShareText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 12.5,
-    color: colors.textMain,
+    fontSize: 13,
+    color: '#1E293B',
   },
   readerDeleteBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF2F2',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: radius.pill,
-    gap: 6,
+    backgroundColor: '#FEE2E2',
   },
   readerDeleteText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 12.5,
+    fontSize: 13,
     color: '#EF4444',
   },
 });

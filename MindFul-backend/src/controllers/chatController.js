@@ -94,31 +94,48 @@ exports.sendMessage = async (req, res) => {
       actionTitle = crisisCheck.actionTitle;
       actionSub = crisisCheck.actionSub;
     } else if (apiKey && apiKey !== 'YOUR_GEMINI_API_KEY') {
-      try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const CANDIDATE_MODELS = [
+        'gemini-3.5-flash-lite',
+        'gemini-3.1-flash-lite',
+        'gemini-flash-lite-latest',
+        'gemini-3.5-flash',
+        'gemini-3.8-flash',
+      ];
 
-        const prompt = `You are Maya, an empathetic, calm, and grounded AI wellness companion for the Mindful app.
-Guidelines:
-- Speak in warm, soothing, concise language (2 to 4 sentences).
-- Never act like a clinical doctor or diagnose conditions.
-- Validate the user's emotional experience first.
-- If applicable, offer a gentle grounding exercise.
-User message: "${message.trim()}"`;
+      const genAI = new GoogleGenerativeAI(apiKey);
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        replyText = response.text().trim();
-        console.log('✨ Maya generated reply using Google Gemini AI successfully');
+      let fullPrompt = `You are Gemini, an intelligent, versatile, and empathetic AI assistant and companion for the Mindful app.
+Key Capabilities:
+- You can answer ANY question the user asks with accuracy, insight, and clarity — including general knowledge, science, mathematics, coding, history, daily life questions, advice, storytelling, and conversation.
+- If the user discusses mental wellness, stress, emotions, or personal reflections, respond with warm empathy, gentle presence, and helpful guidance.
+- Format your answers clearly using clean paragraphs or bullet points when appropriate.
+- Be direct, friendly, and helpful, exactly like Google Gemini.\n\n`;
 
-        const fallback = getEmpatheticFallback(message);
-        if (fallback.hasAction) {
-          hasAction = true;
-          actionTitle = fallback.actionTitle;
-          actionSub = fallback.actionSub;
+      if (Array.isArray(history) && history.length > 0) {
+        fullPrompt += "Conversation history:\n";
+        history.slice(-8).forEach((h) => {
+          const speaker = h.role === 'user' ? 'User' : 'Gemini';
+          fullPrompt += `${speaker}: ${h.text}\n`;
+        });
+        fullPrompt += `User: ${message.trim()}\nGemini:`;
+      } else {
+        fullPrompt += `User: ${message.trim()}\nGemini:`;
+      }
+
+      for (const modelName of CANDIDATE_MODELS) {
+        try {
+          const model = genAI.getGenerativeModel({ model: modelName });
+          const result = await model.generateContent(fullPrompt);
+          const response = await result.response;
+          const text = response.text().trim();
+          if (text) {
+            replyText = text;
+            console.log(`✨ Gemini [${modelName}] generated response successfully`);
+            break;
+          }
+        } catch (modelErr) {
+          console.warn(`[Gemini] ${modelName} unavailable (${modelErr.message?.substring(0, 80)}). Trying next model...`);
         }
-      } catch (geminiError) {
-        console.warn('Gemini API call notice, falling back to built-in empathetic engine:', geminiError.message);
       }
     }
 
@@ -187,5 +204,22 @@ exports.getChatHistory = async (req, res) => {
   } catch (error) {
     console.error('Get chat history error:', error);
     res.status(500).json({ error: 'Failed to retrieve chat history' });
+  }
+};
+
+exports.clearChatHistory = async (req, res) => {
+  try {
+    const userId = req.user ? req.user.id : null;
+    let query = supabase.from('chat_messages').delete();
+    if (userId) {
+      query = query.eq('user_id', userId);
+    } else {
+      query = query.neq('id', '00000000-0000-0000-0000-000000000000');
+    }
+    await query;
+    res.json({ success: true, message: 'Chat history cleared' });
+  } catch (error) {
+    console.error('Clear chat error:', error);
+    res.json({ success: true });
   }
 };

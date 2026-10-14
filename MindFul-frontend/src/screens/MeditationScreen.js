@@ -154,16 +154,16 @@ export default function MeditationScreen({ navigation }) {
     (nextPhase) => {
       if (nextPhase === 'Inhale') {
         Animated.parallel([
-          Animated.timing(scaleAnim, { toValue: 2.3, duration: 4000, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 1.7, duration: 4000, useNativeDriver: true }),
           Animated.timing(opacityAnim, { toValue: 0.1, duration: 4000, useNativeDriver: true }),
-          Animated.timing(waveAnim1, { toValue: 1.3, duration: 4000, useNativeDriver: true }),
-          Animated.timing(waveAnim2, { toValue: 1.5, duration: 4000, useNativeDriver: true }),
+          Animated.timing(waveAnim1, { toValue: 1.2, duration: 4000, useNativeDriver: true }),
+          Animated.timing(waveAnim2, { toValue: 1.35, duration: 4000, useNativeDriver: true }),
         ]).start();
       } else if (nextPhase === 'Hold') {
         Animated.sequence([
-          Animated.timing(pulseAnim, { toValue: 1.06, duration: 1750, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 1.05, duration: 1750, useNativeDriver: true }),
           Animated.timing(pulseAnim, { toValue: 0.98, duration: 1750, useNativeDriver: true }),
-          Animated.timing(pulseAnim, { toValue: 1.04, duration: 1750, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 1.03, duration: 1750, useNativeDriver: true }),
           Animated.timing(pulseAnim, { toValue: 1.0, duration: 1750, useNativeDriver: true }),
         ]).start();
       } else if (nextPhase === 'Exhale') {
@@ -278,9 +278,9 @@ export default function MeditationScreen({ navigation }) {
             stopVoice();
             navigation.goBack();
           }}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Ionicons name="close" size={22} color={colors.textMain} />
+          <Ionicons name="close" size={18} color={colors.textMain} />
         </TouchableOpacity>
 
         {/* Dynamic Center Title Badge */}
@@ -334,7 +334,7 @@ export default function MeditationScreen({ navigation }) {
           >
             <Ionicons
               name={voiceEnabled ? 'volume-high' : 'volume-mute'}
-              size={17}
+              size={15}
               color={voiceEnabled ? activeTheme.color : colors.textMuted}
             />
           </TouchableOpacity>
@@ -348,7 +348,7 @@ export default function MeditationScreen({ navigation }) {
         {/* Colorful Title & Benefit Badge */}
         <View style={styles.titleArea}>
           <View style={[styles.vagusBadge, { backgroundColor: '#FFFFFF', borderColor: activeTheme.border }]}>
-            <Ionicons name="sparkles" size={13} color={activeTheme.color} />
+            <Ionicons name="sparkles" size={11} color={activeTheme.color} />
             <Text style={[styles.vagusBadgeText, { color: activeTheme.color }]}>
               VAGUS NERVE CALM • 5 MIN RESCUE
             </Text>
@@ -363,7 +363,7 @@ export default function MeditationScreen({ navigation }) {
               <View style={[styles.coachAvatar, { backgroundColor: activeTheme.badgeBg }]}>
                 <Ionicons
                   name={voiceEnabled && isRunning ? 'mic' : 'mic-off'}
-                  size={14}
+                  size={12}
                   color={activeTheme.color}
                 />
               </View>
@@ -373,10 +373,10 @@ export default function MeditationScreen({ navigation }) {
               {/* Animated Soundwave EQ Bars */}
               {isRunning && voiceEnabled && (
                 <View style={styles.soundWaveBars}>
+                  <View style={[styles.waveBar, { backgroundColor: activeTheme.color, height: 6 }]} />
+                  <View style={[styles.waveBar, { backgroundColor: activeTheme.color, height: 11 }]} />
                   <View style={[styles.waveBar, { backgroundColor: activeTheme.color, height: 8 }]} />
-                  <View style={[styles.waveBar, { backgroundColor: activeTheme.color, height: 14 }]} />
-                  <View style={[styles.waveBar, { backgroundColor: activeTheme.color, height: 10 }]} />
-                  <View style={[styles.waveBar, { backgroundColor: activeTheme.color, height: 16 }]} />
+                  <View style={[styles.waveBar, { backgroundColor: activeTheme.color, height: 13 }]} />
                 </View>
               )}
             </View>
@@ -396,9 +396,9 @@ export default function MeditationScreen({ navigation }) {
             style={[
               styles.waveRing,
               {
-                width: 250,
-                height: 250,
-                borderRadius: 125,
+                width: 190,
+                height: 190,
+                borderRadius: 95,
                 backgroundColor: activeTheme.glowColor,
                 transform: [{ scale: waveAnim2 }],
                 opacity: opacityAnim,
@@ -411,9 +411,9 @@ export default function MeditationScreen({ navigation }) {
             style={[
               styles.waveRing,
               {
-                width: 200,
-                height: 200,
-                borderRadius: 100,
+                width: 155,
+                height: 155,
+                borderRadius: 77.5,
                 backgroundColor: activeTheme.glowColor,
                 transform: [{ scale: waveAnim1 }],
                 opacity: opacityAnim,
@@ -445,7 +445,7 @@ export default function MeditationScreen({ navigation }) {
           >
             {/* Phase Decorative Emblem */}
             <View style={[styles.phaseEmblemBox, { backgroundColor: activeTheme.badgeBg }]}>
-              <Ionicons name={activeTheme.icon} size={28} color={activeTheme.color} />
+              <Ionicons name={activeTheme.icon} size={20} color={activeTheme.color} />
             </View>
 
             <Text style={[styles.phaseTitleText, { color: activeTheme.color }]}>
@@ -507,7 +507,7 @@ export default function MeditationScreen({ navigation }) {
                 )}
 
                 <View style={[styles.phaseIconCircle, { backgroundColor: pTheme.badgeBg }]}>
-                  <Ionicons name={pTheme.icon} size={16} color={pTheme.color} />
+                  <Ionicons name={pTheme.icon} size={13} color={pTheme.color} />
                 </View>
                 <Text
                   style={[
@@ -538,7 +538,7 @@ export default function MeditationScreen({ navigation }) {
             activeOpacity={0.7}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Ionicons name="refresh" size={20} color={colors.textMuted} />
+            <Ionicons name="refresh" size={17} color={colors.textMuted} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -548,7 +548,7 @@ export default function MeditationScreen({ navigation }) {
           >
             <Ionicons
               name={isRunning ? 'pause' : 'play'}
-              size={22}
+              size={18}
               color={colors.textInverse}
             />
             <Text style={styles.primaryPlayBtnText}>
@@ -556,6 +556,34 @@ export default function MeditationScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* ========================================================= */}
+        {/* CRISIS SUPPORT CARD                                       */}
+        {/* ========================================================= */}
+        <View style={styles.crisisCard}>
+          <View style={styles.crisisHeader}>
+            <View style={styles.crisisIconCircle}>
+              <Ionicons name="shield-checkmark" size={13} color="#DC2626" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.crisisTitle}>Need Immediate Human Support?</Text>
+              <Text style={styles.crisisSubtitle}>
+                Free, confidential crisis helplines and compassionate professionals available 24/7.
+              </Text>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.crisisBtn}
+            onPress={() => navigation.navigate('CrisisSupport')}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="call" size={12} color="#FFFFFF" />
+            <Text style={styles.crisisBtnText}>Access Crisis Support Line</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ height: 16 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -566,34 +594,34 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: spacing.gutter,
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.sm,
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   closeBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 3,
+    shadowRadius: 2,
     elevation: 2,
   },
   headerCenterBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 3.5,
     borderRadius: radius.pill,
     borderWidth: 1,
-    gap: 6,
+    gap: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
@@ -601,25 +629,25 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   statusDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
   },
   headerBadgeText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelSm,
-    letterSpacing: 0.8,
+    fontSize: 9.5,
+    letterSpacing: 0.6,
   },
   headerRightArea: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   langSwitchPill: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
     borderRadius: radius.pill,
-    padding: 3,
+    padding: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -627,23 +655,23 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   langBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
     borderRadius: radius.pill,
   },
   langBtnText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 11,
+    fontSize: 10,
     color: colors.textMuted,
   },
   voiceCoachToggle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.2,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -655,26 +683,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F4F9',
   },
   scrollContent: {
-    paddingHorizontal: spacing.gutter,
-    paddingBottom: spacing.xl,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
     alignItems: 'center',
   },
 
   /* Title Area */
   titleArea: {
     alignItems: 'center',
-    marginTop: spacing.xs,
-    marginBottom: spacing.xs,
+    marginTop: 2,
+    marginBottom: 4,
   },
   vagusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 2.5,
     borderRadius: radius.pill,
     borderWidth: 1,
-    gap: 5,
-    marginBottom: 6,
+    gap: 4,
+    marginBottom: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.03,
@@ -683,174 +711,176 @@ const styles = StyleSheet.create({
   },
   vagusBadgeText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
-    letterSpacing: 0.8,
+    fontSize: 8.5,
+    letterSpacing: 0.6,
   },
   mainTitle: {
     fontFamily: typography.fontFamily.serifMedium,
-    fontSize: typography.sizes.headlineMd,
+    fontSize: 17,
     color: colors.textMain,
     textAlign: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: 2,
+    fontWeight: '700',
   },
 
   /* Coach Speech Card */
   coachSpeechCard: {
     width: '100%',
     backgroundColor: '#FFFFFF',
-    borderRadius: radius.xl,
-    padding: 14,
-    borderWidth: 1.5,
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.07,
-    shadowRadius: 8,
-    elevation: 3,
-    marginVertical: spacing.xs,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+    marginVertical: 3,
   },
   coachHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   coachBadgeLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 5,
   },
   coachAvatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   coachNameText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 12,
-    letterSpacing: 0.3,
+    fontSize: 10.5,
+    letterSpacing: 0.2,
   },
   soundWaveBars: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: 2,
-    marginLeft: 4,
-    height: 16,
+    marginLeft: 3,
+    height: 12,
   },
   waveBar: {
-    width: 3,
-    borderRadius: 1.5,
+    width: 2.5,
+    borderRadius: 1.2,
   },
   cuePill: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: radius.pill,
   },
   cuePillText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 10,
+    fontSize: 9,
   },
   coachSpeechQuote: {
     fontFamily: typography.fontFamily.serifRegular,
-    fontSize: typography.sizes.bodyMd,
+    fontSize: 11.5,
     color: colors.textMain,
     fontStyle: 'italic',
-    lineHeight: 22,
+    lineHeight: 16,
   },
 
   /* Orb Stage */
   orbStage: {
     width: '100%',
-    height: 270,
+    height: 195,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    marginVertical: spacing.xs,
+    marginVertical: 3,
   },
   waveRing: {
     position: 'absolute',
   },
   primaryCircleAura: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     position: 'absolute',
   },
   crystalCenterCore: {
-    width: 174,
-    height: 174,
-    borderRadius: 87,
+    width: 124,
+    height: 124,
+    borderRadius: 62,
     backgroundColor: '#FFFFFF',
-    borderWidth: 2.5,
+    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.14,
-    shadowRadius: 20,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 6,
     zIndex: 10,
   },
   phaseEmblemBox: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 2,
+    marginBottom: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
     elevation: 1,
   },
   phaseTitleText: {
     fontFamily: typography.fontFamily.serifMedium,
-    fontSize: typography.sizes.headlineSm,
+    fontSize: 12.5,
     fontWeight: '700',
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
   },
   timerDisplayNumber: {
     fontFamily: typography.fontFamily.serifMedium,
-    fontSize: typography.sizes.displayLgMobile + 4,
+    fontSize: 24,
     color: colors.textMain,
-    marginVertical: 1,
+    marginVertical: 0,
+    lineHeight: 28,
   },
   phaseActionSubtext: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 10,
+    fontSize: 8.5,
     color: colors.textMuted,
     textAlign: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
   },
 
   /* 8-Cycle Milestone */
   cycleMilestoneBox: {
     alignItems: 'center',
-    marginVertical: spacing.xs,
+    marginVertical: 3,
   },
   cyclePearlRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 6,
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 4,
   },
   cyclePearl: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: '#D1D5DB',
   },
   cyclePearlActive: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 2,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 1.5,
   },
   cycleMilestoneText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelSm,
+    fontSize: 10,
     color: colors.textMuted,
   },
 
@@ -858,26 +888,26 @@ const styles = StyleSheet.create({
   phaseCardsRow: {
     flexDirection: 'row',
     width: '100%',
-    gap: 10,
-    marginVertical: spacing.sm,
+    gap: 7,
+    marginVertical: 5,
   },
   phaseCard: {
     flex: 1,
-    borderRadius: radius.lg,
-    paddingVertical: 12,
+    borderRadius: 10,
+    paddingVertical: 7,
     alignItems: 'center',
-    borderWidth: 1.5,
+    borderWidth: 1.2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
     position: 'relative',
     overflow: 'hidden',
   },
   phaseCardActive: {
-    elevation: 4,
-    shadowOpacity: 0.12,
+    elevation: 3,
+    shadowOpacity: 0.1,
   },
   phaseCardInactive: {
     backgroundColor: '#FFFFFF',
@@ -889,30 +919,30 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 3,
+    height: 2.5,
     backgroundColor: '#EEF2F6',
   },
   cardProgressBarFill: {
     height: '100%',
   },
   phaseIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   phaseCardLabel: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelMd,
+    fontSize: 10,
     color: colors.textMuted,
   },
   phaseCardSec: {
     fontFamily: typography.fontFamily.serifMedium,
-    fontSize: typography.sizes.bodyLg,
+    fontSize: 12,
     color: colors.textMuted,
-    marginTop: 2,
+    marginTop: 1,
   },
 
   /* Bottom Actions */
@@ -920,39 +950,100 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
-    gap: 10,
-    marginTop: spacing.xs,
+    gap: 8,
+    marginTop: 4,
   },
   restartMiniBtn: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 4,
+    shadowRadius: 3,
     elevation: 2,
   },
   primaryPlayBtn: {
     flex: 1,
-    height: 52,
-    borderRadius: radius.lg,
+    height: 38,
+    borderRadius: 19,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: 6,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
   },
   primaryPlayBtnText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelLg,
+    fontSize: 12,
     color: colors.textInverse,
+  },
+
+  /* Crisis Support Card */
+  crisisCard: {
+    width: '100%',
+    backgroundColor: '#FFF1F2',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#FFE4E6',
+    marginTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  crisisHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginBottom: 6,
+  },
+  crisisIconCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#FEE2E2',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  crisisTitle: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 11.5,
+    color: '#E11D48',
+    marginBottom: 1,
+  },
+  crisisSubtitle: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 9.5,
+    color: '#64748B',
+    lineHeight: 13.5,
+  },
+  crisisBtn: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#E11D48',
+    paddingVertical: 6,
+    borderRadius: radius.pill,
+    gap: 5,
+    shadowColor: '#E11D48',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  crisisBtnText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 11,
+    color: '#FFFFFF',
   },
 });
