@@ -5,6 +5,7 @@ import { Newsreader_400Regular, Newsreader_500Medium } from '@expo-google-fonts/
 import { Manrope_400Regular, Manrope_600SemiBold } from '@expo-google-fonts/manrope';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
+import { AuthProvider } from './src/context/AuthContext';
 import { colors } from './src/theme';
 
 export default function App() {
@@ -29,7 +30,9 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AppNavigator />
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

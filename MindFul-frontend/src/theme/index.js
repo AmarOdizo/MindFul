@@ -2,8 +2,11 @@ export const colors = {
   // Brand
   primary: '#7A9A8B', // Muted botanical sage
   primaryDark: '#688678', // Hover/Active
+  onPrimary: '#FFFFFF',
   secondary: '#8D7B9D', // Soft mineral lavender
   tertiary: '#A3B899', // Warm herbal mist
+  tertiaryFixed: '#d8ead0',
+  onTertiaryFixed: '#1c3619',
   neutral: '#1C2541', // Deep midnight slate
   
   // Surfaces
@@ -18,6 +21,8 @@ export const colors = {
   
   // Semantic
   error: '#ba1a1a',
+  errorContainer: '#ffdad6',
+  onErrorContainer: '#93000a',
   success: '#A3B899', // using tertiary as organic progress
   
   // Borders & Outlines

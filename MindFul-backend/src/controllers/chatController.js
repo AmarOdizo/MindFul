@@ -109,6 +109,7 @@ User message: "${message.trim()}"`;
         const result = await model.generateContent(prompt);
         const response = await result.response;
         replyText = response.text().trim();
+        console.log('✨ Maya generated reply using Google Gemini AI successfully');
 
         const fallback = getEmpatheticFallback(message);
         if (fallback.hasAction) {
@@ -117,7 +118,7 @@ User message: "${message.trim()}"`;
           actionSub = fallback.actionSub;
         }
       } catch (geminiError) {
-        console.warn('Gemini API call failed, falling back to built-in empathetic engine:', geminiError.message);
+        console.warn('Gemini API call notice, falling back to built-in empathetic engine:', geminiError.message);
       }
     }
 
@@ -141,6 +142,7 @@ User message: "${message.trim()}"`;
     }
 
     res.json({
+      reply: replyText,
       text: replyText,
       hasAction,
       actionTitle,
@@ -150,6 +152,7 @@ User message: "${message.trim()}"`;
     console.error('Chat controller error:', error);
     const fallback = getEmpatheticFallback(req.body ? req.body.message : '');
     res.json({
+      reply: fallback.text,
       text: fallback.text,
       hasAction: fallback.hasAction,
       actionTitle: fallback.actionTitle,

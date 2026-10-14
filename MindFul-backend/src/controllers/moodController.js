@@ -29,6 +29,11 @@ exports.logMood = async (req, res) => {
 
     if (error) {
       console.error('Supabase error saving mood log:', error);
+      if (error.code === '42501' || (error.message && error.message.toLowerCase().includes('row-level security'))) {
+        console.warn('💡 Tip: Supabase Row-Level Security blocked this operation. To fix:');
+        console.warn('   1. In Supabase SQL Editor, run "ALTER TABLE public.mood_logs DISABLE ROW LEVEL SECURITY;" (or run fix_rls.sql)');
+        console.warn('   2. OR set SUPABASE_SERVICE_ROLE_KEY in MindFul-backend/.env\n');
+      }
       return res.status(500).json({ error: error.message || 'Failed to record mood check-in' });
     }
 

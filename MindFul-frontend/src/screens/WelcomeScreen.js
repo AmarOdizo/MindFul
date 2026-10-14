@@ -87,13 +87,13 @@ export default function WelcomeScreen({ navigation }) {
         <View style={styles.actionDeck}>
           <TouchableOpacity 
             style={styles.primaryBtn} 
-            onPress={() => navigation.navigate('MainTabs')}
+            onPress={() => navigation.navigate('Register')}
           >
-            <Text style={styles.primaryBtnText}>Get Started</Text>
+            <Text style={styles.primaryBtnText}>Get Started • Create Account</Text>
             <Ionicons name="arrow-forward" size={18} color={colors.textInverse} style={{marginLeft: 8}} />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.secondaryBtn} onPress={() => navigation.navigate('MainTabs')}>
+          <TouchableOpacity style={styles.secondaryBtn} onPress={() => navigation.navigate('Login')}>
             <Text style={styles.secondaryBtnText}>I already have an account • Sign In</Text>
           </TouchableOpacity>
         </View>

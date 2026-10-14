@@ -26,6 +26,11 @@ exports.createEntry = async (req, res) => {
 
     if (error) {
       console.error('Supabase error saving journal entry:', error);
+      if (error.code === '42501' || (error.message && error.message.toLowerCase().includes('row-level security'))) {
+        console.warn('💡 Tip: Supabase Row-Level Security blocked this operation. To fix:');
+        console.warn('   1. In Supabase SQL Editor, run "ALTER TABLE public.journal_entries DISABLE ROW LEVEL SECURITY;" (or run fix_rls.sql)');
+        console.warn('   2. OR set SUPABASE_SERVICE_ROLE_KEY in MindFul-backend/.env\n');
+      }
       return res.status(500).json({ error: error.message || 'Failed to save journal entry' });
     }
 
@@ -146,6 +151,11 @@ exports.updateEntry = async (req, res) => {
 exports.deleteEntry = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Handle mock / sample entries gracefully
+    if (!id || id.startsWith('sample-')) {
+      return res.json({ message: 'Sample journal entry removed successfully' });
+    }
 
     const { data: existing, error: findError } = await supabase
       .from('journal_entries')

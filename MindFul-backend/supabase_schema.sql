@@ -66,15 +66,29 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_user_id ON public.chat_messages(use
 CREATE INDEX IF NOT EXISTS idx_chat_messages_created_at ON public.chat_messages(created_at ASC);
 
 -- ==========================================================
--- Enable Row Level Security (RLS)
+-- Row Level Security (RLS) Configuration
+-- For custom Node/Express backends using bcrypt & JWT:
+-- Option 1 (Recommended & simplest for custom backend): Disable RLS
 -- ==========================================================
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.mood_logs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.journal_entries ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mood_logs DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.journal_entries DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.chat_messages DISABLE ROW LEVEL SECURITY;
 
--- Allow backend service access (with anon/service role key)
-CREATE POLICY "Allow public backend access to users" ON public.users FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow public backend access to mood_logs" ON public.mood_logs FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow public backend access to journal_entries" ON public.journal_entries FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow public backend access to chat_messages" ON public.chat_messages FOR ALL USING (true) WITH CHECK (true);
+-- Option 2 (If you prefer keeping RLS enabled in Supabase, uncomment below):
+-- ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.mood_logs ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.journal_entries ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+--
+-- DROP POLICY IF EXISTS "Allow all on users" ON public.users;
+-- CREATE POLICY "Allow all on users" ON public.users FOR ALL TO public, anon, authenticated USING (true) WITH CHECK (true);
+--
+-- DROP POLICY IF EXISTS "Allow all on mood_logs" ON public.mood_logs;
+-- CREATE POLICY "Allow all on mood_logs" ON public.mood_logs FOR ALL TO public, anon, authenticated USING (true) WITH CHECK (true);
+--
+-- DROP POLICY IF EXISTS "Allow all on journal_entries" ON public.journal_entries;
+-- CREATE POLICY "Allow all on journal_entries" ON public.journal_entries FOR ALL TO public, anon, authenticated USING (true) WITH CHECK (true);
+--
+-- DROP POLICY IF EXISTS "Allow all on chat_messages" ON public.chat_messages;
+-- CREATE POLICY "Allow all on chat_messages" ON public.chat_messages FOR ALL TO public, anon, authenticated USING (true) WITH CHECK (true);
