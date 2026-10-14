@@ -22,28 +22,39 @@ const isAndroidEmulator = () => {
   );
 };
 
+// Production Render Backend URL
+export const PRODUCTION_API_URL = 'https://mindful-6vxe.onrender.com';
+
 let cachedWorkingBaseUrl = null;
 
 // Returns an array of candidate URLs to try in priority order
 export const getApiBaseUrls = () => {
-  if (Platform.OS === 'web') {
-    return ['http://localhost:5000'];
-  }
-
   const list = [];
+
   // Prioritize previously verified working base URL
   if (cachedWorkingBaseUrl) {
     list.push(cachedWorkingBaseUrl);
   }
 
+  // 1. Primary Live Backend (Render Cloud)
+  if (!list.includes(PRODUCTION_API_URL)) {
+    list.push(PRODUCTION_API_URL);
+  }
+
+  // 2. Web fallback
+  if (Platform.OS === 'web') {
+    if (!list.includes('http://localhost:5000')) list.push('http://localhost:5000');
+    return list;
+  }
+
   const isEmulator = isAndroidEmulator();
 
-  // If in Android Emulator, 10.0.2.2 is the official virtual router alias to PC localhost
+  // 3. Android Emulator (10.0.2.2 virtual alias to PC localhost)
   if (isEmulator && !list.includes('http://10.0.2.2:5000')) {
     list.push('http://10.0.2.2:5000');
   }
 
-  // Auto-detect from Metro scriptURL if available
+  // 4. Auto-detect from Metro scriptURL if available
   try {
     const scriptURL = NativeModules?.SourceCode?.scriptURL;
     if (scriptURL) {
@@ -58,17 +69,17 @@ export const getApiBaseUrls = () => {
     // ignore
   }
 
-  // Active Wi-Fi LAN IP (192.168.1.3)
+  // 5. Active Wi-Fi LAN IP (192.168.1.3)
   if (!list.includes('http://192.168.1.3:5000')) {
     list.push('http://192.168.1.3:5000');
   }
 
-  // 10.0.2.2 for Android in general
+  // 6. 10.0.2.2 for Android in general
   if (Platform.OS === 'android' && !list.includes('http://10.0.2.2:5000')) {
     list.push('http://10.0.2.2:5000');
   }
 
-  // Localhost (works when using: adb reverse tcp:5000 tcp:5000)
+  // 7. Localhost fallback
   if (!list.includes('http://localhost:5000')) {
     list.push('http://localhost:5000');
   }
@@ -108,9 +119,10 @@ async function request(endpoint, options = {}) {
     const baseUrl = candidateUrls[i];
     const url = `${baseUrl}${endpoint}`;
 
-    // Faster timeout for early candidates so fallback happens promptly
+    // Give Render cloud URLs enough time to respond even on cold-start (20s)
+    const isCloud = baseUrl.includes('onrender.com');
     const isSingleCandidate = candidateUrls.length === 1 || Boolean(cachedWorkingBaseUrl);
-    const timeoutMs = isSingleCandidate ? 15000 : 4000;
+    const timeoutMs = isCloud ? 20000 : (isSingleCandidate ? 15000 : 4000);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -158,7 +170,7 @@ async function request(endpoint, options = {}) {
 
   console.warn(`[API] All backend endpoints unreachable:`, candidateUrls);
   throw new Error(
-    `Unable to connect to backend server. Tried: ${candidateUrls.join(', ')}. Please verify backend is running on port 5000.`
+    `Unable to connect to backend server. Tried: ${candidateUrls.join(', ')}. Please check server status.`
   );
 }
 

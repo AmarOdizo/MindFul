@@ -41,8 +41,9 @@ npm run dev
 npm start
 ```
 
-Server URL: `http://localhost:5000`
-Health Check: `http://localhost:5000/api/health`
+Live Production URL: `https://mindful-6vxe.onrender.com`
+Local Server URL: `http://localhost:5000`
+Health Check: `https://mindful-6vxe.onrender.com/api/health` (or `http://localhost:5000/api/health`)
 
 ---
 
