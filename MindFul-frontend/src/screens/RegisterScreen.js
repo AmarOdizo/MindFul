@@ -93,25 +93,24 @@ export default function RegisterScreen({ navigation }) {
               onPress={() => navigation.goBack()}
               hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             >
-              <Ionicons name="arrow-back" size={22} color={colors.textMain} />
+              <Ionicons name="arrow-back" size={20} color={colors.textMain} />
             </TouchableOpacity>
             <View style={styles.badgePill}>
-              <Ionicons name="sparkles" size={13} color="#685878" />
+              <Ionicons name="sparkles" size={13} color="#059669" />
               <Text style={styles.badgePillText}>Begin Journey</Text>
             </View>
           </View>
 
           {/* Header Section */}
           <View style={styles.headerSection}>
-            <View style={styles.glowAura} />
-            <View style={styles.emblemContainer}>
-              <View style={styles.emblemInner}>
-                <Ionicons name="heart" size={28} color={colors.primary} />
+            <View style={styles.emblemAura}>
+              <View style={styles.emblemCircle}>
+                <Ionicons name="heart" size={26} color="#059669" />
               </View>
             </View>
             <Text style={styles.title}>Create Sanctuary</Text>
             <Text style={styles.subtitle}>
-              Begin your personalized emotional wellness sanctuary with Maya today.
+              Begin your personalized emotional wellness journey with MindFul.
             </Text>
           </View>
 
@@ -120,7 +119,7 @@ export default function RegisterScreen({ navigation }) {
             {/* Error Banner */}
             {errorMessage ? (
               <View style={styles.errorBanner}>
-                <Ionicons name="alert-circle" size={18} color={colors.error} />
+                <Ionicons name="alert-circle" size={16} color="#DC2626" />
                 <Text style={styles.errorBannerText}>{errorMessage}</Text>
               </View>
             ) : null}
@@ -131,14 +130,14 @@ export default function RegisterScreen({ navigation }) {
               <View style={styles.inputContainer}>
                 <Ionicons
                   name="person-outline"
-                  size={20}
-                  color={colors.textMuted}
+                  size={18}
+                  color="#64748B"
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={styles.textInput}
                   placeholder="e.g. Elena Rostova"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor="#94A3B8"
                   value={name}
                   onChangeText={(text) => {
                     setName(text);
@@ -155,14 +154,14 @@ export default function RegisterScreen({ navigation }) {
               <View style={styles.inputContainer}>
                 <Ionicons
                   name="mail-outline"
-                  size={20}
-                  color={colors.textMuted}
+                  size={18}
+                  color="#64748B"
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={styles.textInput}
                   placeholder="name@example.com"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor="#94A3B8"
                   value={email}
                   onChangeText={(text) => {
                     setEmail(text);
@@ -181,14 +180,14 @@ export default function RegisterScreen({ navigation }) {
               <View style={styles.inputContainer}>
                 <Ionicons
                   name="lock-closed-outline"
-                  size={20}
-                  color={colors.textMuted}
+                  size={18}
+                  color="#64748B"
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={styles.textInput}
                   placeholder="At least 6 characters"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor="#94A3B8"
                   value={password}
                   onChangeText={(text) => {
                     setPassword(text);
@@ -197,11 +196,14 @@ export default function RegisterScreen({ navigation }) {
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                 />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                    size={20}
-                    color={colors.textMuted}
+                    size={18}
+                    color="#64748B"
                   />
                 </TouchableOpacity>
               </View>
@@ -213,14 +215,14 @@ export default function RegisterScreen({ navigation }) {
               <View style={styles.inputContainer}>
                 <Ionicons
                   name="shield-checkmark-outline"
-                  size={20}
-                  color={colors.textMuted}
+                  size={18}
+                  color="#64748B"
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={styles.textInput}
                   placeholder="Re-type your password"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor="#94A3B8"
                   value={confirmPassword}
                   onChangeText={(text) => {
                     setConfirmPassword(text);
@@ -229,11 +231,14 @@ export default function RegisterScreen({ navigation }) {
                   secureTextEntry={!showConfirmPassword}
                   autoCapitalize="none"
                 />
-                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
                   <Ionicons
                     name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
-                    size={20}
-                    color={colors.textMuted}
+                    size={18}
+                    color="#64748B"
                   />
                 </TouchableOpacity>
               </View>
@@ -246,7 +251,7 @@ export default function RegisterScreen({ navigation }) {
               activeOpacity={0.8}
             >
               <View style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}>
-                {agreedToTerms && <Ionicons name="checkmark" size={14} color="#FFFFFF" />}
+                {agreedToTerms && <Ionicons name="checkmark" size={13} color="#FFFFFF" />}
               </View>
               <Text style={styles.termsText}>
                 I accept the MindFul sanctuary guidelines and commit to gentle self-compassion.
@@ -258,14 +263,14 @@ export default function RegisterScreen({ navigation }) {
               style={[styles.submitBtn, isLoading && styles.submitBtnDisabled]}
               onPress={handleRegister}
               disabled={isLoading}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
               {isLoading ? (
-                <ActivityIndicator color={colors.textInverse} size="small" />
+                <ActivityIndicator color="#FFFFFF" size="small" />
               ) : (
                 <View style={styles.btnContent}>
                   <Text style={styles.submitBtnText}>Create Account</Text>
-                  <Ionicons name="leaf" size={18} color={colors.textInverse} />
+                  <Ionicons name="arrow-forward" size={16} color="#FFFFFF" />
                 </View>
               )}
             </TouchableOpacity>
@@ -274,16 +279,16 @@ export default function RegisterScreen({ navigation }) {
           {/* Switch to Login */}
           <View style={styles.switchSection}>
             <Text style={styles.switchPrompt}>Already have a sanctuary account?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')} activeOpacity={0.7}>
               <Text style={styles.switchAction}> Sign In</Text>
             </TouchableOpacity>
           </View>
 
           {/* Security & Confidentiality Footer */}
           <View style={styles.privacyNote}>
-            <Ionicons name="lock-closed" size={13} color={colors.textMuted} />
+            <Ionicons name="shield-checkmark-outline" size={12} color="#94A3B8" />
             <Text style={styles.privacyNoteText}>
-              All reflections & thoughts are confidential and securely stored.
+              100% Private • End-to-End Encrypted Sanctuary
             </Text>
           </View>
         </ScrollView>
@@ -295,153 +300,158 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.surfaceBase,
+    backgroundColor: '#FAF9F6',
   },
   keyboardView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: spacing.gutter,
-    paddingBottom: spacing.xl,
+    paddingHorizontal: 20,
+    paddingBottom: 32,
   },
   navBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
+    paddingVertical: 10,
   },
   backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   badgePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#edd8fe',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: radius.pill,
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 14,
     gap: 4,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
   },
   badgePillText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelSm,
-    color: '#685878',
+    fontSize: 11,
+    color: '#059669',
   },
   headerSection: {
     alignItems: 'center',
-    marginVertical: spacing.md,
-    position: 'relative',
+    marginTop: 10,
+    marginBottom: 20,
   },
-  glowAura: {
-    position: 'absolute',
-    top: -10,
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: 'rgba(237, 216, 254, 0.45)',
-  },
-  emblemContainer: {
-    padding: 6,
-    borderRadius: 40,
-    backgroundColor: '#FFFFFF',
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 3,
-    marginBottom: spacing.sm,
-  },
-  emblemInner: {
+  emblemAura: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#c8ead9',
+    backgroundColor: '#ECFDF5',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  emblemCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   title: {
     fontFamily: typography.fontFamily.serifMedium,
-    fontSize: typography.sizes.headlineLg,
-    color: colors.textMain,
-    textAlign: 'center',
+    fontSize: 26,
+    color: '#1C2541',
+    letterSpacing: -0.3,
   },
   subtitle: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: typography.sizes.bodySm,
-    color: colors.textMuted,
+    fontSize: 12,
+    color: '#5C677D',
     textAlign: 'center',
-    marginTop: 6,
+    marginTop: 4,
     paddingHorizontal: 16,
-    lineHeight: 20,
   },
   formCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: radius.xl,
-    padding: spacing.lg,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 3,
-    marginTop: spacing.sm,
+    borderRadius: 20,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 2,
   },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.errorContainer,
-    borderRadius: radius.md,
-    padding: 10,
-    marginBottom: spacing.md,
-    gap: 8,
+    gap: 6,
+    backgroundColor: '#FEE2E2',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
   },
   errorBannerText: {
     flex: 1,
-    fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelMd,
-    color: colors.onErrorContainer,
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 12,
+    color: '#DC2626',
   },
   inputGroup: {
-    marginBottom: spacing.md,
+    marginBottom: 12,
   },
   inputLabel: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelMd,
-    color: colors.textMain,
-    marginBottom: spacing.xs,
+    fontSize: 12,
+    color: '#334155',
+    marginBottom: 5,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surfaceBase,
-    borderRadius: radius.lg,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(122, 154, 139, 0.25)',
-    paddingHorizontal: 14,
-    height: 50,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 12,
+    height: 48,
   },
   inputIcon: {
-    marginRight: 10,
+    marginRight: 8,
   },
   textInput: {
     flex: 1,
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: typography.sizes.bodyMd,
-    color: colors.textMain,
+    fontSize: 13,
+    color: '#1C2541',
   },
   termsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: spacing.sm,
+    marginTop: 4,
+    marginBottom: 14,
     gap: 10,
   },
   checkbox: {
@@ -449,34 +459,33 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 6,
     borderWidth: 1.5,
-    borderColor: colors.textMuted,
+    borderColor: '#CBD5E1',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
   },
   checkboxChecked: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: '#059669',
+    borderColor: '#059669',
   },
   termsText: {
     flex: 1,
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: typography.sizes.labelMd,
-    color: colors.textMuted,
-    lineHeight: 18,
+    fontSize: 11,
+    color: '#64748B',
+    lineHeight: 16,
   },
   submitBtn: {
-    backgroundColor: colors.primary,
     height: 50,
-    borderRadius: radius.lg,
+    borderRadius: 14,
+    backgroundColor: '#059669',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: spacing.sm,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 4,
+    elevation: 3,
   },
   submitBtnDisabled: {
     opacity: 0.7,
@@ -484,40 +493,41 @@ const styles = StyleSheet.create({
   btnContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   submitBtnText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelLg,
-    color: colors.textInverse,
+    fontSize: 15,
+    color: '#FFFFFF',
+    letterSpacing: 0.2,
   },
   switchSection: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: spacing.lg,
+    marginTop: 20,
+    marginBottom: 10,
   },
   switchPrompt: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: typography.sizes.bodySm,
-    color: colors.textMuted,
+    fontSize: 12,
+    color: '#64748B',
   },
   switchAction: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.bodySm,
-    color: colors.primary,
+    fontSize: 12,
+    color: '#059669',
   },
   privacyNote: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: spacing.md,
-    gap: 6,
+    gap: 4,
+    marginTop: 6,
   },
   privacyNoteText: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: typography.sizes.labelSm,
-    color: colors.textMuted,
-    textAlign: 'center',
+    fontSize: 10,
+    color: '#94A3B8',
   },
 });

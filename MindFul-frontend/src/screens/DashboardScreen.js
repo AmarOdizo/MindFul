@@ -143,16 +143,29 @@ export default function DashboardScreen({ navigation }) {
           </Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.avatarBtn}
-          onPress={() => navigation.navigate('Profile')}
-          activeOpacity={0.8}
-        >
-          <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop' }}
-            style={styles.avatarImage}
-          />
-        </TouchableOpacity>
+        <View style={styles.headerRight}>
+          <TouchableOpacity
+            style={styles.settingsIconBtn}
+            onPress={() => navigation.navigate('Profile')}
+            activeOpacity={0.75}
+            accessibilityLabel="Sanctuary Settings"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="settings-outline" size={18} color="#475569" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.avatarBtn}
+            onPress={() => navigation.navigate('Profile')}
+            activeOpacity={0.8}
+            accessibilityLabel="My Profile"
+          >
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop' }}
+              style={styles.avatarImage}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -339,6 +352,26 @@ const styles = StyleSheet.create({
     fontSize: 11.5,
     color: colors.textMuted,
     marginTop: 2,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  settingsIconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.2)',
+    shadowColor: '#1C2541',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
   },
   avatarBtn: {
     padding: 2,

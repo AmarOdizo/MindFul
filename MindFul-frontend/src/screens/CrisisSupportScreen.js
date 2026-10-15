@@ -25,15 +25,20 @@ export default function CrisisSupportScreen({ navigation }) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={colors.textMain} />
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="arrow-back" size={22} color={colors.textMain} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Sos Crisis Support</Text>
+          <Text style={styles.headerTitle}>Crisis Support</Text>
         </View>
         <View style={styles.headerRight}>
           <View style={styles.sosBadge}>
-            <Ionicons name="medical" size={14} color={colors.error} />
-            <Text style={styles.sosBadgeText}>SOS</Text>
+            <Ionicons name="heart" size={13} color="#DC2626" />
+            <Text style={styles.sosBadgeText}>24/7 SOS</Text>
           </View>
         </View>
       </View>
@@ -47,7 +52,7 @@ export default function CrisisSupportScreen({ navigation }) {
               <View style={styles.pulsingDot} />
               <Text style={styles.confidentialText}>24/7 CONFIDENTIAL CARE</Text>
             </View>
-            <Ionicons name="shield-checkmark" size={22} color={colors.primary} />
+            <Ionicons name="shield-checkmark" size={20} color="#059669" />
           </View>
           <Text style={styles.reassuranceTitle}>You are not alone in this moment.</Text>
           <Text style={styles.reassuranceDesc}>
@@ -61,8 +66,8 @@ export default function CrisisSupportScreen({ navigation }) {
           {/* 988 Lifeline */}
           <View style={styles.lifelineCardPrimary}>
             <View style={styles.lifelineCardTop}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Ionicons name="heart" size={24} color={colors.error} />
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="heart" size={20} color="#DC2626" />
                 <Text style={styles.lifelineRegionText}> UNITED STATES & CANADA</Text>
               </View>
               <View style={styles.tollFreeBadge}><Text style={styles.tollFreeText}>Toll-Free</Text></View>
@@ -70,12 +75,20 @@ export default function CrisisSupportScreen({ navigation }) {
             <Text style={styles.lifelineTitle}>Suicide & Crisis Lifeline</Text>
             <Text style={styles.lifelineSub}>Free · Confidential · 24/7 · Dedicated human counselors</Text>
             <View style={styles.lifelineActionRow}>
-              <TouchableOpacity style={styles.primaryActionBtn} onPress={() => handleCall('988')}>
-                <Ionicons name="call" size={20} color={colors.onError} />
+              <TouchableOpacity
+                style={styles.primaryActionBtn}
+                onPress={() => handleCall('988')}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="call" size={18} color="#FFFFFF" />
                 <Text style={styles.primaryActionText}> Call 988 Now</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.secondaryActionBtn} onPress={() => handleText('988', '')}>
-                <Ionicons name="chatbubble" size={20} color={colors.errorContainer} />
+              <TouchableOpacity
+                style={styles.secondaryActionBtn}
+                onPress={() => handleText('988', '')}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="chatbubble" size={18} color="#DC2626" />
                 <Text style={styles.secondaryActionText}> Text 988</Text>
               </TouchableOpacity>
             </View>
@@ -84,9 +97,11 @@ export default function CrisisSupportScreen({ navigation }) {
           {/* Crisis Text Line */}
           <View style={styles.lifelineCard}>
             <View style={styles.lifelineCardTop}>
-              <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
-                <View style={[styles.iconBox, {backgroundColor: '#f0dbff'}]}><Ionicons name="chatbubbles" size={18} color="#231531" /></View>
-                <View style={{marginLeft: 8, flex: 1}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                <View style={[styles.iconBox, { backgroundColor: '#EDE9FE' }]}>
+                  <Ionicons name="chatbubbles" size={16} color="#7C3AED" />
+                </View>
+                <View style={{ marginLeft: 10, flex: 1 }}>
                   <Text style={styles.cardItemTitle}>Crisis Text Line</Text>
                   <Text style={styles.cardItemSub} numberOfLines={1}>Available across US, UK & Canada</Text>
                 </View>
@@ -94,21 +109,27 @@ export default function CrisisSupportScreen({ navigation }) {
               <View style={styles.smsBadge}><Text style={styles.smsText}>24/7 SMS</Text></View>
             </View>
             <Text style={styles.cardItemDesc}>Connect via discreet text message with a crisis counselor at any moment of need.</Text>
-            <TouchableOpacity style={styles.textHomeBtn} onPress={() => handleText('741741', 'HOME')}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Ionicons name="send" size={18} color={colors.textInverse} />
-                <Text style={styles.textHomeText}> Text HOME to 741741</Text>
+            <TouchableOpacity
+              style={styles.textHomeBtn}
+              onPress={() => handleText('741741', 'HOME')}
+              activeOpacity={0.85}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons name="send" size={16} color="#FFFFFF" />
+                <Text style={styles.textHomeText}>Text HOME to 741741</Text>
               </View>
-              <Ionicons name="arrow-forward" size={18} color={colors.textInverse} />
+              <Ionicons name="arrow-forward" size={16} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
 
           {/* Trevor Project */}
           <View style={styles.lifelineCard}>
             <View style={styles.lifelineCardTop}>
-              <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
-                <View style={[styles.iconBox, {backgroundColor: '#c8ead9'}]}><Ionicons name="people" size={18} color="#012016" /></View>
-                <View style={{marginLeft: 8, flex: 1}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                <View style={[styles.iconBox, { backgroundColor: '#ECFDF5' }]}>
+                  <Ionicons name="people" size={16} color="#059669" />
+                </View>
+                <View style={{ marginLeft: 10, flex: 1 }}>
                   <Text style={styles.cardItemTitle}>The Trevor Project</Text>
                   <Text style={styles.cardItemSub} numberOfLines={1}>LGBTQ Young People (Ages 13–24)</Text>
                 </View>
@@ -117,12 +138,20 @@ export default function CrisisSupportScreen({ navigation }) {
             </View>
             <Text style={styles.cardItemDesc}>Trained LGBTQ-affirming crisis counselors ready to listen with deep empathy and zero judgment.</Text>
             <View style={styles.lifelineActionRow}>
-              <TouchableOpacity style={styles.tertiaryBtn} onPress={() => handleCall('18664887386')}>
-                <Ionicons name="call" size={18} color={colors.primary} />
+              <TouchableOpacity
+                style={styles.tertiaryBtn}
+                onPress={() => handleCall('18664887386')}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="call" size={16} color="#059669" />
                 <Text style={styles.tertiaryBtnText}> Call Counselors</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.tertiaryBtn} onPress={() => handleText('678678', 'START')}>
-                <Ionicons name="chatbubble" size={18} color={colors.primary} />
+              <TouchableOpacity
+                style={styles.tertiaryBtn}
+                onPress={() => handleText('678678', 'START')}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="chatbubble" size={16} color="#059669" />
                 <Text style={styles.tertiaryBtnText}> Text START</Text>
               </TouchableOpacity>
             </View>
@@ -130,13 +159,19 @@ export default function CrisisSupportScreen({ navigation }) {
 
           {/* Emergency 911 */}
           <View style={styles.emergencyCard}>
-            <View style={styles.emergencyIconBox}><Ionicons name="warning" size={24} color={colors.error} /></View>
-            <View style={{flex: 1, paddingHorizontal: 12}}>
-              <Text style={styles.cardItemTitle}>Immediate Physical Danger?</Text>
-              <Text style={styles.cardItemSub}>If you or someone nearby needs instant medical care...</Text>
+            <View style={styles.emergencyIconBox}>
+              <Ionicons name="warning" size={22} color="#DC2626" />
             </View>
-            <TouchableOpacity style={styles.call911Btn} onPress={() => handleCall('911')}>
-              <Ionicons name="call" size={14} color={colors.onError} />
+            <View style={{ flex: 1, paddingHorizontal: 10 }}>
+              <Text style={styles.cardItemTitle}>Immediate Physical Danger?</Text>
+              <Text style={styles.cardItemSub}>If you or someone nearby needs instant medical care</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.call911Btn}
+              onPress={() => handleCall('911')}
+              activeOpacity={0.85}
+            >
+              <Ionicons name="call" size={13} color="#FFFFFF" />
               <Text style={styles.call911Text}> Call 911</Text>
             </TouchableOpacity>
           </View>
@@ -146,54 +181,62 @@ export default function CrisisSupportScreen({ navigation }) {
         {/* Sensory Grounding */}
         <View style={styles.groundingSection}>
           <View style={styles.groundingHeader}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Ionicons name="leaf" size={22} color={colors.primary} />
-              <View style={{marginLeft: 8}}>
-                <Text style={styles.cardItemTitle}>Wait with Grounding</Text>
-                <Text style={styles.cardItemSub}>Calm your body while connecting</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={[styles.iconBox, { backgroundColor: '#ECFDF5', marginRight: 10 }]}>
+                <Ionicons name="leaf" size={16} color="#059669" />
+              </View>
+              <View>
+                <Text style={styles.cardItemTitle}>5-4-3-2-1 Sensory Grounding</Text>
+                <Text style={styles.cardItemSub}>Calm your body right now</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.resetBtn} onPress={() => setCurrentStep(0)}>
-              <Ionicons name="refresh" size={14} color={colors.textMain} />
+            <TouchableOpacity
+              style={styles.resetBtn}
+              onPress={() => setCurrentStep(0)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="refresh" size={13} color="#64748B" />
               <Text style={styles.resetBtnText}> Reset</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.groundingCard}>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={styles.stepBadgeText}>{step.badge}</Text>
-              <Ionicons name={step.icon} size={20} color={colors.primary} />
+              <Ionicons name={step.icon} size={18} color="#059669" />
             </View>
             <Text style={styles.stepTitle}>{step.title}</Text>
             <Text style={styles.stepDesc}>{step.desc}</Text>
           </View>
 
           <View style={styles.progressRow}>
-            {[0, 1, 2, 3, 4].map(idx => (
-              <View key={idx} style={[styles.progressDot, {backgroundColor: idx <= currentStep ? colors.primary : '#dbe1ff'}]} />
+            {[0, 1, 2, 3, 4].map((idx) => (
+              <View
+                key={idx}
+                style={[
+                  styles.progressDot,
+                  { backgroundColor: idx <= currentStep ? '#059669' : '#E2E8F0' },
+                ]}
+              />
             ))}
           </View>
 
-          <TouchableOpacity style={styles.stepNextBtn} onPress={() => setCurrentStep((currentStep + 1) % 5)}>
+          <TouchableOpacity
+            style={styles.stepNextBtn}
+            onPress={() => setCurrentStep((currentStep + 1) % 5)}
+            activeOpacity={0.85}
+          >
             <Text style={styles.stepNextBtnText}>{step.nextBtn}</Text>
-            <Ionicons name="arrow-forward" size={18} color={colors.primaryContainerText} />
+            <Ionicons name="arrow-forward" size={16} color="#FFFFFF" />
           </TouchableOpacity>
-        </View>
-
-        {/* Youth & Teen Sanctuary Card */}
-        <View style={styles.youthCard}>
-          <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 8}}>
-            <Ionicons name="sunny" size={22} color={colors.secondary} />
-            <Text style={[styles.cardItemTitle, {marginLeft: 8}]}>Youth & Teen Guidance</Text>
-          </View>
-          <Text style={styles.reassuranceDesc}>Talking to a trusted adult, family member, school counselor, or medical professional can bring deep relief. You do not have to carry heavy weights alone.</Text>
-          <Image source={{ uri: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?q=80&w=600&auto=format&fit=crop' }} style={styles.youthImage} />
         </View>
 
         {/* Offline Notice */}
         <View style={styles.offlineNotice}>
-          <Ionicons name="cellular" size={18} color={colors.textMuted} />
-          <Text style={styles.offlineText}>Helplines operate over regular cellular voice and SMS networks even if internet connectivity, Wi-Fi, or app services are currently offline.</Text>
+          <Ionicons name="cellular" size={16} color="#64748B" />
+          <Text style={styles.offlineText}>
+            Helplines operate over regular voice and SMS networks even if internet connectivity, Wi-Fi, or app services are offline.
+          </Text>
         </View>
 
       </ScrollView>
@@ -202,75 +245,418 @@ export default function CrisisSupportScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: colors.surfaceBase },
-  
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.gutter, height: 56 },
-  headerLeft: { flexDirection: 'row', alignItems: 'center' },
-  backBtn: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'flex-start' },
-  headerTitle: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.headlineSm, color: colors.textMain },
-  headerRight: { flexDirection: 'row', alignItems: 'center' },
-  sosBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.errorContainer, paddingHorizontal: 10, paddingVertical: 6, borderRadius: radius.pill },
-  sosBadgeText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelSm, color: colors.onErrorContainer, marginLeft: 4 },
-  
-  scrollContent: { paddingHorizontal: spacing.gutter, paddingBottom: spacing.xl * 2 },
-  
-  reassuranceBanner: { backgroundColor: '#f2f3ff', padding: spacing.lg, borderRadius: radius.xl, marginVertical: spacing.sm },
-  reassuranceTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  confidentialBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#edd8fe', paddingHorizontal: 10, paddingVertical: 4, borderRadius: radius.pill },
-  pulsingDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary, marginRight: 6 },
-  confidentialText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelSm, color: '#1f301a', letterSpacing: 0.5 },
-  reassuranceTitle: { fontFamily: typography.fontFamily.serifMedium, fontSize: typography.sizes.headlineSm, color: colors.textMain, marginBottom: 8 },
-  reassuranceDesc: { fontFamily: typography.fontFamily.sansRegular, fontSize: typography.sizes.bodyMd, color: colors.textMuted, lineHeight: 24 },
-  
-  lifelinesSection: { marginVertical: spacing.md, gap: spacing.md },
-  
-  lifelineCardPrimary: { backgroundColor: colors.errorContainer, padding: spacing.lg, borderRadius: radius.xl, shadowColor: colors.error, shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 },
-  lifelineCardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
-  lifelineRegionText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelMd, color: colors.onErrorContainer, letterSpacing: 0.5 },
-  tollFreeBadge: { backgroundColor: '#FFFFFF', paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill },
-  tollFreeText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: 11, color: colors.textMain },
-  lifelineTitle: { fontFamily: typography.fontFamily.serifMedium, fontSize: typography.sizes.headlineMd, color: colors.onErrorContainer },
-  lifelineSub: { fontFamily: typography.fontFamily.sansRegular, fontSize: typography.sizes.bodySm, color: 'rgba(147,0,10,0.9)', marginBottom: 16 },
-  lifelineActionRow: { flexDirection: 'row', gap: 10 },
-  primaryActionBtn: { flex: 1, height: 56, backgroundColor: colors.error, borderRadius: radius.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  primaryActionText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelLg, color: colors.onError },
-  secondaryActionBtn: { flex: 1, height: 56, backgroundColor: '#FFFFFF', borderRadius: radius.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  secondaryActionText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelLg, color: colors.onErrorContainer },
-  
-  lifelineCard: { backgroundColor: '#FFFFFF', padding: spacing.lg, borderRadius: radius.xl, shadowColor: colors.primary, shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
-  iconBox: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  cardItemTitle: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.headlineSm, color: colors.textMain },
-  cardItemSub: { fontFamily: typography.fontFamily.sansRegular, fontSize: typography.sizes.labelSm, color: colors.textMuted },
-  smsBadge: { backgroundColor: '#ebedff', paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill },
-  smsText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelMd, color: colors.textMain },
-  cardItemDesc: { fontFamily: typography.fontFamily.sansRegular, fontSize: typography.sizes.bodySm, color: colors.textMuted, marginVertical: 12 },
-  
-  textHomeBtn: { height: 48, backgroundColor: colors.primary, borderRadius: radius.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16 },
-  textHomeText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelLg, color: colors.textInverse },
-  tertiaryBtn: { flex: 1, height: 48, backgroundColor: '#e3e7ff', borderRadius: radius.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  tertiaryBtnText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelLg, color: colors.textMain },
-  
-  emergencyCard: { backgroundColor: '#ebedff', padding: spacing.md, borderRadius: radius.xl, flexDirection: 'row', alignItems: 'center' },
-  emergencyIconBox: { width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(186,26,26,0.1)', justifyContent: 'center', alignItems: 'center' },
-  call911Btn: { height: 40, backgroundColor: colors.error, borderRadius: radius.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
-  call911Text: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelMd, color: colors.onError },
-  
-  groundingSection: { backgroundColor: '#FFFFFF', padding: spacing.lg, borderRadius: radius.xl, marginVertical: spacing.md, shadowColor: colors.primary, shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
-  groundingHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  resetBtn: { height: 32, backgroundColor: '#ebedff', borderRadius: radius.pill, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 },
-  resetBtnText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelSm, color: colors.textMain },
-  groundingCard: { backgroundColor: '#f2f3ff', padding: spacing.md, borderRadius: radius.lg, marginBottom: 12 },
-  stepBadgeText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelSm, color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.5 },
-  stepTitle: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.headlineSm, color: colors.textMain, marginTop: 4, marginBottom: 8 },
-  stepDesc: { fontFamily: typography.fontFamily.sansRegular, fontSize: typography.sizes.bodySm, color: colors.textMuted },
-  progressRow: { flexDirection: 'row', gap: 6, marginBottom: 16 },
-  progressDot: { flex: 1, height: 6, borderRadius: 3 },
-  stepNextBtn: { height: 48, backgroundColor: '#7a9a8b', borderRadius: radius.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  stepNextBtnText: { fontFamily: typography.fontFamily.sansSemiBold, fontSize: typography.sizes.labelLg, color: '#133126', marginRight: 8 },
-  
-  youthCard: { backgroundColor: '#f2f3ff', padding: spacing.lg, borderRadius: radius.xl, marginVertical: spacing.md },
-  youthImage: { width: '100%', height: 140, borderRadius: radius.lg, marginTop: 16 },
-  
-  offlineNotice: { backgroundColor: '#FFFFFF', padding: spacing.md, borderRadius: radius.xl, flexDirection: 'row', alignItems: 'flex-start', marginVertical: spacing.sm },
-  offlineText: { flex: 1, marginLeft: 12, fontFamily: typography.fontFamily.sansRegular, fontSize: typography.sizes.bodySm, color: colors.textMuted, lineHeight: 20 }
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FAF9F6',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#FAF9F6',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(122, 154, 139, 0.1)',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.2)',
+  },
+  headerTitle: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 17,
+    color: '#1C2541',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sosBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEE2E2',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 14,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+  },
+  sosBadgeText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 11,
+    color: '#DC2626',
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  reassuranceBanner: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 18,
+    marginTop: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  reassuranceTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  confidentialBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  pulsingDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#059669',
+    marginRight: 6,
+  },
+  confidentialText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 9,
+    color: '#059669',
+    letterSpacing: 0.5,
+  },
+  reassuranceTitle: {
+    fontFamily: typography.fontFamily.serifMedium,
+    fontSize: 18,
+    color: '#1C2541',
+    marginBottom: 6,
+  },
+  reassuranceDesc: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 12,
+    color: '#5C677D',
+    lineHeight: 18,
+  },
+  lifelinesSection: {
+    marginVertical: 14,
+    gap: 12,
+  },
+  lifelineCardPrimary: {
+    backgroundColor: '#FEF2F2',
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#FECDD3',
+    shadowColor: '#DC2626',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  lifelineCardTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  lifelineRegionText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 11,
+    color: '#991B1B',
+    letterSpacing: 0.4,
+  },
+  tollFreeBadge: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#FECDD3',
+  },
+  tollFreeText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 10,
+    color: '#991B1B',
+  },
+  lifelineTitle: {
+    fontFamily: typography.fontFamily.serifMedium,
+    fontSize: 20,
+    color: '#991B1B',
+    marginBottom: 2,
+  },
+  lifelineSub: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11,
+    color: '#B91C1C',
+    marginBottom: 12,
+  },
+  lifelineActionRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  primaryActionBtn: {
+    flex: 1,
+    height: 46,
+    backgroundColor: '#DC2626',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  primaryActionText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 13,
+    color: '#FFFFFF',
+  },
+  secondaryActionBtn: {
+    flex: 1,
+    height: 46,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+  },
+  secondaryActionText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 13,
+    color: '#DC2626',
+  },
+  lifelineCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  iconBox: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardItemTitle: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 14,
+    color: '#1C2541',
+  },
+  cardItemSub: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  smsBadge: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  smsText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 10,
+    color: '#475569',
+  },
+  cardItemDesc: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11.5,
+    color: '#5C677D',
+    marginVertical: 10,
+    lineHeight: 16,
+  },
+  textHomeBtn: {
+    height: 44,
+    backgroundColor: '#7A9A8B',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+  },
+  textHomeText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 12.5,
+    color: '#FFFFFF',
+  },
+  tertiaryBtn: {
+    flex: 1,
+    height: 42,
+    backgroundColor: '#ECFDF5',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  tertiaryBtnText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 12,
+    color: '#059669',
+  },
+  emergencyCard: {
+    backgroundColor: '#FFF1F2',
+    padding: 12,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FECDD3',
+  },
+  emergencyIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#FEE2E2',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  call911Btn: {
+    height: 36,
+    backgroundColor: '#DC2626',
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    gap: 4,
+  },
+  call911Text: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 11,
+    color: '#FFFFFF',
+  },
+  groundingSection: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 18,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  groundingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  resetBtn: {
+    height: 28,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    gap: 2,
+  },
+  resetBtnText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 10,
+    color: '#64748B',
+  },
+  groundingCard: {
+    backgroundColor: '#F8FAFC',
+    padding: 12,
+    borderRadius: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  stepBadgeText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 10,
+    color: '#059669',
+    letterSpacing: 0.5,
+  },
+  stepTitle: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 14,
+    color: '#1C2541',
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  stepDesc: {
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11.5,
+    color: '#64748B',
+    lineHeight: 16,
+  },
+  progressRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 14,
+  },
+  progressDot: {
+    flex: 1,
+    height: 4,
+    borderRadius: 2,
+  },
+  stepNextBtn: {
+    height: 44,
+    backgroundColor: '#7A9A8B',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  stepNextBtnText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 13,
+    color: '#FFFFFF',
+  },
+  offlineNotice: {
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 14,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(122, 154, 139, 0.15)',
+  },
+  offlineText: {
+    flex: 1,
+    marginLeft: 10,
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11,
+    color: '#64748B',
+    lineHeight: 16,
+  },
 });
