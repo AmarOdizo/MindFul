@@ -1,19 +1,21 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
-import { colors, typography, radius } from '../theme';
+import { Pressable, Text, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { colors, typography, radius, shadows } from '../theme';
 
 export default function Button({ 
   title, 
   onPress, 
-  variant = 'primary', // 'primary' | 'secondary' | 'ghost'
+  variant = 'primary', // 'primary' | 'secondary' | 'ghost' | 'danger'
   style, 
   textStyle,
-  disabled 
+  disabled,
+  loading = false,
+  icon,
 }) {
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,
         variant === 'primary' && styles.primaryBase,
@@ -23,24 +25,33 @@ export default function Button({
         variant === 'secondary' && pressed && styles.secondaryPressed,
         
         variant === 'ghost' && styles.ghostBase,
+        variant === 'danger' && styles.dangerBase,
         
-        disabled && styles.disabled,
+        (disabled || loading) && styles.disabled,
         style,
       ]}
     >
-      {({ pressed }) => (
-        <Text
-          style={[
-            styles.textBase,
-            variant === 'primary' && styles.primaryText,
-            variant === 'secondary' && styles.secondaryText,
-            variant === 'ghost' && styles.ghostText,
-            variant === 'ghost' && pressed && styles.ghostTextPressed,
-            textStyle,
-          ]}
-        >
-          {title}
-        </Text>
+      {loading ? (
+        <ActivityIndicator 
+          size="small" 
+          color={variant === 'primary' || variant === 'danger' ? '#FFFFFF' : colors.primary} 
+        />
+      ) : (
+        <View style={styles.contentRow}>
+          {icon ? <View style={styles.iconBox}>{icon}</View> : null}
+          <Text
+            style={[
+              styles.textBase,
+              variant === 'primary' && styles.primaryText,
+              variant === 'secondary' && styles.secondaryText,
+              variant === 'ghost' && styles.ghostText,
+              variant === 'danger' && styles.dangerText,
+              textStyle,
+            ]}
+          >
+            {title}
+          </Text>
+        </View>
       )}
     </Pressable>
   );
@@ -48,55 +59,72 @@ export default function Button({
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 48,
-    borderRadius: radius.md, // 8px (0.5rem)
+    minHeight: 50,
+    borderRadius: radius.md,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
+  },
+  contentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  iconBox: {
+    marginRight: 2,
   },
   textBase: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: typography.sizes.labelLg, // 14px
-    letterSpacing: 0.14, // 0.01em approx
+    fontSize: typography.sizes.bodyMd,
+    letterSpacing: 0.2,
   },
   
   // Primary Button
   primaryBase: {
-    backgroundColor: colors.primary, // #7A9A8B
+    backgroundColor: colors.primary,
+    ...shadows.level3,
   },
   primaryPressed: {
-    backgroundColor: colors.primaryDark, // #688678
+    backgroundColor: colors.primaryDark,
+    transform: [{ scale: 0.99 }],
   },
   primaryText: {
-    color: colors.onPrimary, // #ffffff
+    color: '#FFFFFF',
   },
   
   // Secondary Button
   secondaryBase: {
-    backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: colors.borderMedium, // rgba(122, 154, 139, 0.3)
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: colors.borderMedium,
+    ...shadows.level1,
   },
   secondaryPressed: {
-    backgroundColor: 'rgba(122, 154, 139, 0.08)',
+    backgroundColor: colors.surfaceHover,
   },
   secondaryText: {
-    color: colors.textMain, // #1C2541
+    color: colors.textMain,
   },
   
-  // Ghost / Tertiary Button
+  // Ghost Button
   ghostBase: {
     backgroundColor: 'transparent',
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
   },
   ghostText: {
-    color: colors.textMuted, // #5C677D
+    color: colors.textMuted,
   },
-  ghostTextPressed: {
-    textDecorationLine: 'underline',
+
+  // Danger Button
+  dangerBase: {
+    backgroundColor: colors.error,
+  },
+  dangerText: {
+    color: '#FFFFFF',
   },
   
   disabled: {
-    opacity: 0.6,
+    opacity: 0.55,
   },
 });

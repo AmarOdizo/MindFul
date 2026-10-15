@@ -7,24 +7,29 @@ import {
   ImageBackground,
   ScrollView,
   StatusBar,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, shadows } from '../theme';
 
 export default function WelcomeScreen({ navigation }) {
+  const { height } = useWindowDimensions();
+  const isCompact = height < 700;
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FAF9F6" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.surfaceBase} />
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
+        bounces={false}
       >
         {/* Brand Emblem & Minimalist Header */}
         <View style={styles.headerSection}>
           <View style={styles.emblemAura}>
             <View style={styles.emblemCircle}>
-              <Ionicons name="leaf" size={30} color="#059669" />
+              <Ionicons name="leaf" size={28} color={colors.primary} />
             </View>
           </View>
 
@@ -33,13 +38,13 @@ export default function WelcomeScreen({ navigation }) {
         </View>
 
         {/* Calming Visual Hero Card */}
-        <View style={styles.heroCard}>
+        <View style={[styles.heroCard, isCompact && styles.heroCardCompact]}>
           <ImageBackground
             source={{
               uri: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?q=80&w=800&auto=format&fit=crop',
             }}
             style={styles.heroImage}
-            imageStyle={{ borderRadius: 20 }}
+            imageStyle={{ borderRadius: radius.xl }}
           >
             <View style={styles.heroOverlay} />
             <View style={styles.heroBadge}>
@@ -52,16 +57,22 @@ export default function WelcomeScreen({ navigation }) {
         {/* 3 Sleek Quick Value Badges */}
         <View style={styles.highlightsRow}>
           <View style={styles.highlightPill}>
-            <Ionicons name="leaf-outline" size={14} color="#059669" />
-            <Text style={styles.highlightText}>4-7-8 Breathing</Text>
+            <View style={[styles.pillIconBox, { backgroundColor: colors.primaryLight }]}>
+              <Ionicons name="leaf-outline" size={13} color={colors.primary} />
+            </View>
+            <Text style={styles.highlightText} numberOfLines={1}>4-7-8 Rhythm</Text>
           </View>
           <View style={styles.highlightPill}>
-            <Ionicons name="journal-outline" size={14} color="#D97706" />
-            <Text style={styles.highlightText}>Daily Journal</Text>
+            <View style={[styles.pillIconBox, { backgroundColor: colors.amberLight }]}>
+              <Ionicons name="journal-outline" size={13} color={colors.amber} />
+            </View>
+            <Text style={styles.highlightText} numberOfLines={1}>Daily Journal</Text>
           </View>
           <View style={styles.highlightPill}>
-            <Ionicons name="chatbubble-ellipses-outline" size={14} color="#7C3AED" />
-            <Text style={styles.highlightText}>Maya AI Guide</Text>
+            <View style={[styles.pillIconBox, { backgroundColor: colors.secondaryLight }]}>
+              <Ionicons name="chatbubble-ellipses-outline" size={13} color={colors.secondary} />
+            </View>
+            <Text style={styles.highlightText} numberOfLines={1}>Maya Guide</Text>
           </View>
         </View>
 
@@ -72,7 +83,7 @@ export default function WelcomeScreen({ navigation }) {
             onPress={() => navigation.navigate('Register')}
             activeOpacity={0.85}
           >
-            <Text style={styles.primaryBtnText}>Get Started</Text>
+            <Text style={styles.primaryBtnText}>Begin Sanctuary Journey</Text>
             <Ionicons name="arrow-forward" size={16} color="#FFFFFF" />
           </TouchableOpacity>
 
@@ -80,6 +91,7 @@ export default function WelcomeScreen({ navigation }) {
             style={styles.secondaryBtn}
             onPress={() => navigation.navigate('Login')}
             activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Text style={styles.secondaryBtnText}>
               Already have an account? <Text style={styles.secondaryBtnBold}>Sign In</Text>
@@ -89,8 +101,8 @@ export default function WelcomeScreen({ navigation }) {
 
         {/* Minimal Confidentiality / Trust Footer */}
         <View style={styles.trustFooter}>
-          <Ionicons name="shield-checkmark-outline" size={12} color="#94A3B8" />
-          <Text style={styles.trustText}>100% Private & Confidential Sanctuary</Text>
+          <Ionicons name="shield-checkmark-outline" size={13} color={colors.textMuted} />
+          <Text style={styles.trustText}>100% Private • End-to-End Encrypted Sanctuary</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -100,12 +112,12 @@ export default function WelcomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAF9F6',
+    backgroundColor: colors.surfaceBase,
   },
   container: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 24,
+    paddingHorizontal: spacing.gutter,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xl,
     flexGrow: 1,
     justifyContent: 'space-between',
   },
@@ -113,86 +125,80 @@ const styles = StyleSheet.create({
   /* Header Section */
   headerSection: {
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 16,
+    marginTop: spacing.xs,
+    marginBottom: spacing.md,
   },
   emblemAura: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: '#ECFDF5',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: spacing.sm,
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: colors.primaryBorder,
   },
   emblemCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#059669',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 2,
+    ...shadows.level1,
   },
   appName: {
     fontFamily: typography.fontFamily.serifMedium,
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#1C2541',
+    fontSize: typography.sizes.displayMd,
+    color: colors.textMain,
     letterSpacing: -0.5,
   },
   tagline: {
     fontFamily: typography.fontFamily.sansRegular,
-    fontSize: 13,
-    color: '#5C677D',
-    marginTop: 3,
+    fontSize: typography.sizes.bodySm,
+    color: colors.textMuted,
+    marginTop: 2,
   },
 
   /* Hero Card */
   heroCard: {
     width: '100%',
     height: 180,
-    borderRadius: 20,
+    borderRadius: radius.xl,
     overflow: 'hidden',
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
+    marginVertical: spacing.sm,
+    ...shadows.level2,
+  },
+  heroCardCompact: {
+    height: 140,
   },
   heroImage: {
     width: '100%',
     height: '100%',
     justifyContent: 'flex-end',
-    padding: 12,
+    padding: spacing.md,
   },
   heroOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(28, 37, 65, 0.28)',
-    borderRadius: 20,
+    backgroundColor: 'rgba(15, 23, 42, 0.3)',
+    borderRadius: radius.xl,
   },
   heroBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
     alignSelf: 'flex-start',
     backgroundColor: 'rgba(255, 255, 255, 0.22)',
     paddingVertical: 5,
     paddingHorizontal: 10,
-    borderRadius: 14,
+    borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.35)',
   },
   heroBadgeText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 11,
-    fontWeight: '600',
     color: '#FFFFFF',
     letterSpacing: 0.3,
   },
@@ -202,55 +208,54 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 8,
-    marginVertical: 12,
+    marginVertical: spacing.md,
   },
   highlightPill: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 9,
+    gap: 6,
+    backgroundColor: colors.surfaceRaised,
+    paddingVertical: 10,
     paddingHorizontal: 6,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: 'rgba(122, 154, 139, 0.18)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 2,
-    elevation: 1,
+    borderColor: colors.borderLight,
+    ...shadows.level1,
+  },
+  pillIconBox: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   highlightText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 11,
-    fontWeight: '600',
-    color: '#1C2541',
+    color: colors.textMain,
   },
 
   /* Action Area */
   actionSection: {
-    marginTop: 10,
-    marginBottom: 8,
-    gap: 10,
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
+    gap: spacing.sm,
   },
   primaryBtn: {
-    height: 50,
-    borderRadius: 14,
-    backgroundColor: '#059669',
+    height: 52,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    shadowColor: '#059669',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
-    elevation: 3,
+    gap: 8,
+    ...shadows.level3,
   },
   primaryBtnText: {
     fontFamily: typography.fontFamily.sansSemiBold,
-    fontSize: 15,
+    fontSize: typography.sizes.bodyMd,
     color: '#FFFFFF',
     letterSpacing: 0.2,
   },
@@ -260,12 +265,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   secondaryBtnText: {
-    fontSize: 13,
-    color: '#64748B',
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: typography.sizes.bodySm,
+    color: colors.textMuted,
   },
   secondaryBtnBold: {
-    fontWeight: '700',
-    color: '#059669',
+    fontFamily: typography.fontFamily.sansSemiBold,
+    color: colors.primary,
   },
 
   /* Trust Footer */
@@ -273,12 +279,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
-    marginTop: 6,
-    paddingBottom: 4,
+    gap: 5,
+    marginTop: spacing.xs,
+    paddingBottom: 2,
   },
   trustText: {
+    fontFamily: typography.fontFamily.sansRegular,
     fontSize: 11,
-    color: '#94A3B8',
+    color: colors.textMuted,
   },
 });

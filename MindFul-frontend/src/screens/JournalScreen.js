@@ -751,7 +751,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.gutter,
     paddingTop: 8,
     paddingBottom: 14,
     backgroundColor: '#FFFFFF',
@@ -759,25 +759,26 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F1F5F9',
   },
   headerTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
+    fontFamily: typography.fontFamily.serifSemiBold,
     fontSize: 26,
-    color: '#0F172A',
-    fontWeight: '700',
+    color: colors.textMain,
   },
   headerSubtitle: {
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 12.5,
-    color: '#64748B',
+    color: colors.textMuted,
     marginTop: 2,
   },
   newEntryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#059669',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    minHeight: 44,
     paddingHorizontal: 16,
-    paddingVertical: 9,
+    paddingVertical: 10,
     borderRadius: radius.pill,
-    shadowColor: '#059669',
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 5,
@@ -786,7 +787,7 @@ const styles = StyleSheet.create({
   newEntryBtnText: {
     fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 13.5,
-    color: '#FFFFFF',
+    color: colors.textInverse,
     marginLeft: 4,
   },
 
@@ -846,7 +847,7 @@ const styles = StyleSheet.create({
 
   /* 3. Search Bar */
   searchContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.gutter,
     marginTop: 6,
     marginBottom: 8,
   },
@@ -856,7 +857,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: radius.pill,
     paddingHorizontal: 14,
-    height: 42,
+    height: 46,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     shadowColor: '#000',
@@ -869,7 +870,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 13.5,
-    color: '#0F172A',
+    color: colors.textMain,
   },
 
   /* 4. Filter Pills */
@@ -878,14 +879,15 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   filterScrollContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.gutter,
     gap: 8,
   },
   filterPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 13,
-    paddingVertical: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    minHeight: 36,
     borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -893,7 +895,7 @@ const styles = StyleSheet.create({
   filterPillText: {
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 12,
-    color: '#64748B',
+    color: colors.textMuted,
   },
 
   /* 5. Empty State */
@@ -901,7 +903,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: radius.xl,
     padding: 28,
-    marginHorizontal: 20,
+    marginHorizontal: spacing.gutter,
     marginTop: 20,
     alignItems: 'center',
     borderWidth: 1,
@@ -917,15 +919,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
+    fontFamily: typography.fontFamily.serifSemiBold,
     fontSize: 18,
-    color: '#0F172A',
-    fontWeight: '600',
+    color: colors.textMain,
   },
   emptySubtitle: {
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 13,
-    color: '#64748B',
+    color: colors.textMuted,
     textAlign: 'center',
     marginTop: 4,
     marginBottom: 16,
@@ -933,15 +934,16 @@ const styles = StyleSheet.create({
   emptyButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#059669',
+    backgroundColor: colors.primary,
+    minHeight: 44,
     paddingHorizontal: 18,
-    paddingVertical: 9,
+    paddingVertical: 10,
     borderRadius: radius.pill,
   },
   emptyButtonText: {
     fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 13,
-    color: '#FFFFFF',
+    color: colors.textInverse,
   },
 
   /* 6. Entry Card */
@@ -949,7 +951,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: radius.lg,
     padding: 15,
-    marginHorizontal: 20,
+    marginHorizontal: spacing.gutter,
     marginTop: 10,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -1003,16 +1005,15 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
   },
   entryTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
+    fontFamily: typography.fontFamily.serifSemiBold,
     fontSize: 16.5,
-    color: '#0F172A',
-    fontWeight: '600',
+    color: colors.textMain,
     marginBottom: 4,
   },
   entrySnippet: {
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 13,
-    color: '#475569',
+    color: colors.textSecondary,
     lineHeight: 18.5,
     marginBottom: 10,
   },
@@ -1039,9 +1040,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   actionBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1057,7 +1058,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.gutter,
     paddingTop: 12,
     paddingBottom: Platform.OS === 'ios' ? 36 : 20,
     maxHeight: '90%',
@@ -1077,13 +1078,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   modalTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
+    fontFamily: typography.fontFamily.serifSemiBold,
     fontSize: 19,
-    color: '#0F172A',
-    fontWeight: '700',
+    color: colors.textMain,
   },
   modalCloseBtn: {
-    padding: 4,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalPillsScroll: {
     marginBottom: 10,
@@ -1161,7 +1166,8 @@ const styles = StyleSheet.create({
   saveBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#059669',
+    backgroundColor: colors.primary,
+    minHeight: 44,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: radius.pill,
@@ -1173,7 +1179,7 @@ const styles = StyleSheet.create({
   saveBtnText: {
     fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 13.5,
-    color: '#FFFFFF',
+    color: colors.textInverse,
   },
 
   /* 8. Reader Modal */
@@ -1181,7 +1187,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.gutter,
   },
   readerSheet: {
     backgroundColor: '#FFFFFF',
@@ -1201,16 +1207,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   readerTitle: {
-    fontFamily: typography.fontFamily.serifMedium,
+    fontFamily: typography.fontFamily.serifSemiBold,
     fontSize: 21,
-    color: '#0F172A',
-    fontWeight: '700',
+    color: colors.textMain,
     marginBottom: 2,
   },
   readerDate: {
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 12,
-    color: '#64748B',
+    color: colors.textMuted,
     marginBottom: 14,
   },
   readerBodyScroll: {
@@ -1220,7 +1225,7 @@ const styles = StyleSheet.create({
   readerContentText: {
     fontFamily: typography.fontFamily.sansRegular,
     fontSize: 14.5,
-    color: '#334155',
+    color: colors.textSecondary,
     lineHeight: 23,
   },
   readerActionBar: {
@@ -1234,27 +1239,29 @@ const styles = StyleSheet.create({
   readerShareBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    minHeight: 40,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
     borderRadius: radius.pill,
     backgroundColor: '#F1F5F9',
   },
   readerShareText: {
     fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 13,
-    color: '#1E293B',
+    color: colors.textMain,
   },
   readerDeleteBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    minHeight: 40,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
     borderRadius: radius.pill,
     backgroundColor: '#FEE2E2',
   },
   readerDeleteText: {
     fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 13,
-    color: '#EF4444',
+    color: colors.rose || '#EF4444',
   },
 });

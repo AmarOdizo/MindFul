@@ -25,7 +25,7 @@ const TabIcon = ({ focused, routeName }) => {
       <Ionicons
         name={iconName}
         size={21}
-        color={focused ? '#059669' : '#64748B'}
+        color={focused ? colors.primary : colors.textMuted}
       />
     </View>
   );
@@ -33,31 +33,36 @@ const TabIcon = ({ focused, routeName }) => {
 
 export default function TabNavigator() {
   const insets = useSafeAreaInsets();
+  const bottomInset = Math.max(insets.bottom, Platform.OS === 'android' ? 6 : 10);
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: true,
-        tabBarActiveTintColor: '#059669',
-        tabBarInactiveTintColor: '#64748B',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
           fontFamily: typography.fontFamily.sansSemiBold,
           fontSize: 11,
-          marginTop: 2,
+          marginTop: 1,
+          letterSpacing: 0.1,
         },
         tabBarStyle: {
-          backgroundColor: '#FAF9F6',
-          borderTopColor: 'rgba(122, 154, 139, 0.15)',
+          backgroundColor: '#FFFFFF',
+          borderTopColor: 'rgba(100, 116, 139, 0.1)',
           borderTopWidth: 1,
-          elevation: 8,
-          shadowColor: '#1C2541',
+          elevation: 6,
+          shadowColor: '#0F172A',
           shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 8,
-          height: Platform.OS === 'android' ? 64 + (insets.bottom > 0 ? insets.bottom : 6) : 60 + insets.bottom,
+          shadowOpacity: 0.04,
+          shadowRadius: 10,
+          height: 58 + bottomInset,
           paddingTop: 6,
-          paddingBottom: Platform.OS === 'android' ? (insets.bottom > 0 ? insets.bottom + 4 : 8) : insets.bottom + 4,
+          paddingBottom: bottomInset,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 2,
         },
         tabBarIcon: ({ focused }) => (
           <TabIcon focused={focused} routeName={route.name} />
@@ -79,14 +84,14 @@ export default function TabNavigator() {
 
 const styles = StyleSheet.create({
   iconWrapper: {
-    width: 50,
-    height: 30,
-    borderRadius: 15,
+    width: 44,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 1,
+    marginBottom: 2,
   },
   iconWrapperFocused: {
-    backgroundColor: '#E8F5EF',
+    backgroundColor: colors.primaryLight,
   },
 });

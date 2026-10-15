@@ -340,7 +340,7 @@ export default function ProfileScreen({ navigation }) {
             <Switch
               value={morningEnabled}
               onValueChange={setMorningEnabled}
-              trackColor={{ false: '#E2E8F0', true: '#7A9A8B' }}
+              trackColor={{ false: '#E2E8F0', true: colors.primary }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -359,7 +359,7 @@ export default function ProfileScreen({ navigation }) {
             <Switch
               value={eveningEnabled}
               onValueChange={setEveningEnabled}
-              trackColor={{ false: '#E2E8F0', true: '#7A9A8B' }}
+              trackColor={{ false: '#E2E8F0', true: colors.primary }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -378,7 +378,7 @@ export default function ProfileScreen({ navigation }) {
             <Switch
               value={audioSounds}
               onValueChange={setAudioSounds}
-              trackColor={{ false: '#E2E8F0', true: '#7A9A8B' }}
+              trackColor={{ false: '#E2E8F0', true: colors.primary }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -400,7 +400,7 @@ export default function ProfileScreen({ navigation }) {
             <Switch
               value={biometricEnabled}
               onValueChange={setBiometricEnabled}
-              trackColor={{ false: '#E2E8F0', true: '#7A9A8B' }}
+              trackColor={{ false: '#E2E8F0', true: colors.primary }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.gutter,
     paddingTop: 6,
     paddingBottom: 10,
   },
@@ -639,15 +639,15 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   brandTag: {
+    fontFamily: typography.fontFamily.sansBold,
     fontSize: 10,
-    fontWeight: '700',
     letterSpacing: 0.8,
-    color: '#059669',
+    color: colors.primary,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1C2541',
+    fontFamily: typography.fontFamily.serifSemiBold,
+    fontSize: 22,
+    color: colors.textMain,
   },
   headerActions: {
     flexDirection: 'row',
@@ -658,29 +658,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     backgroundColor: '#FEE2E2',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 16,
+    minHeight: 38,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: '#FCA5A5',
   },
   sosButtonText: {
+    fontFamily: typography.fontFamily.sansBold,
     fontSize: 11,
-    fontWeight: '700',
     color: '#EF4444',
   },
 
   /* Scroll container */
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.gutter,
     paddingBottom: 36,
   },
 
   /* Hero Identity Card */
   heroCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 14,
+    borderRadius: radius.xl,
+    padding: 16,
     marginBottom: 14,
     borderWidth: 1,
     borderColor: 'rgba(122, 154, 139, 0.18)',
@@ -699,19 +700,19 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatarImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: '#E2E8F0',
   },
   avatarPencilBadge: {
     position: 'absolute',
     bottom: -2,
     right: -2,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#059669',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -734,35 +735,37 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   memberTagText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
     fontSize: 10,
-    fontWeight: '600',
-    color: '#059669',
+    color: colors.primary,
   },
   userName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1C2541',
+    fontFamily: typography.fontFamily.sansBold,
+    fontSize: 17,
+    color: colors.textMain,
   },
   userEmail: {
-    fontSize: 11,
-    color: '#64748B',
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11.5,
+    color: colors.textMuted,
     marginTop: 1,
   },
   editBtnSmall: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
     backgroundColor: '#ECFDF5',
-    paddingVertical: 5,
-    paddingHorizontal: 9,
-    borderRadius: 12,
+    minHeight: 38,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: '#A7F3D0',
   },
   editBtnSmallText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#059669',
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 12,
+    color: colors.primary,
   },
   bioContainer: {
     marginTop: 12,
@@ -845,8 +848,8 @@ const styles = StyleSheet.create({
   /* Card Section */
   cardSection: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 14,
+    borderRadius: radius.xl,
+    padding: 16,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: 'rgba(122, 154, 139, 0.18)',
@@ -863,13 +866,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#1C2541',
+    fontFamily: typography.fontFamily.sansBold,
+    fontSize: 14,
+    color: colors.textMain,
   },
   cardSubtitle: {
-    fontSize: 11,
-    color: '#64748B',
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11.5,
+    color: colors.textMuted,
     marginTop: 1,
   },
   goalActivePill: {
@@ -877,16 +881,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 3,
     backgroundColor: '#ECFDF5',
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 10,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: '#A7F3D0',
   },
   goalActivePillText: {
+    fontFamily: typography.fontFamily.sansBold,
     fontSize: 11,
-    fontWeight: '700',
-    color: '#059669',
+    color: colors.primary,
   },
   goalPillsRow: {
     flexDirection: 'row',
@@ -898,24 +902,25 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 7,
-    borderRadius: 10,
+    minHeight: 44,
+    paddingVertical: 8,
+    borderRadius: radius.md,
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   goalPillSelected: {
-    backgroundColor: '#7A9A8B',
-    borderColor: '#7A9A8B',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   goalPillText: {
+    fontFamily: typography.fontFamily.sansRegular,
     fontSize: 12,
-    fontWeight: '600',
-    color: '#64748B',
+    color: colors.textMuted,
   },
   goalPillTextSelected: {
-    color: '#FFFFFF',
-    fontWeight: '700',
+    color: colors.textInverse,
+    fontFamily: typography.fontFamily.sansBold,
   },
 
   /* Setting row */
@@ -925,9 +930,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   settingIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -937,13 +942,14 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   settingTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#1C2541',
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 13,
+    color: colors.textMain,
   },
   settingDesc: {
-    fontSize: 10,
-    color: '#64748B',
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11,
+    color: colors.textMuted,
     marginTop: 1,
   },
   settingDivider: {
@@ -964,13 +970,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   footerVersion: {
+    fontFamily: typography.fontFamily.sansBold,
     fontSize: 9,
-    fontWeight: '700',
     letterSpacing: 0.8,
     color: '#94A3B8',
   },
   footerSub: {
-    fontSize: 10,
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 10.5,
     color: '#94A3B8',
     marginTop: 2,
   },
@@ -983,9 +990,9 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 22,
-    padding: 18,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    padding: spacing.gutter,
     maxHeight: '85%',
   },
   modalHeader: {
@@ -998,18 +1005,19 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F1F5F9',
   },
   modalTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1C2541',
+    fontFamily: typography.fontFamily.serifSemiBold,
+    fontSize: 18,
+    color: colors.textMain,
   },
   modalSubtitle: {
-    fontSize: 11,
-    color: '#64748B',
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 11.5,
+    color: colors.textMuted,
   },
   modalCloseBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1018,9 +1026,9 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   inputLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#334155',
+    fontFamily: typography.fontFamily.sansBold,
+    fontSize: 11.5,
+    color: colors.textSecondary,
     marginBottom: 6,
     marginTop: 10,
   },
@@ -1031,15 +1039,15 @@ const styles = StyleSheet.create({
   },
   avatarOption: {
     position: 'relative',
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     borderWidth: 2,
     borderColor: 'transparent',
     overflow: 'hidden',
   },
   avatarOptionSelected: {
-    borderColor: '#059669',
+    borderColor: colors.primary,
   },
   avatarOptionImg: {
     width: '100%',
@@ -1049,10 +1057,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: '#059669',
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1061,16 +1069,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     backgroundColor: '#F8FAFC',
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     paddingHorizontal: 12,
-    height: 42,
+    minHeight: 46,
   },
   inputField: {
     flex: 1,
-    fontSize: 12,
-    color: '#1C2541',
+    fontFamily: typography.fontFamily.sansRegular,
+    fontSize: 13,
+    color: colors.textMain,
   },
   modalGoalRow: {
     flexDirection: 'row',
@@ -1081,24 +1090,25 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 7,
-    borderRadius: 10,
+    minHeight: 44,
+    paddingVertical: 8,
+    borderRadius: radius.md,
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   modalGoalPillSelected: {
-    backgroundColor: '#7A9A8B',
-    borderColor: '#7A9A8B',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   modalGoalPillText: {
+    fontFamily: typography.fontFamily.sansRegular,
     fontSize: 12,
-    fontWeight: '600',
-    color: '#64748B',
+    color: colors.textMuted,
   },
   modalGoalPillTextSelected: {
-    color: '#FFFFFF',
-    fontWeight: '700',
+    color: colors.textInverse,
+    fontFamily: typography.fontFamily.sansBold,
   },
   modalBtnRow: {
     flexDirection: 'row',
@@ -1107,29 +1117,32 @@ const styles = StyleSheet.create({
   },
   modalCancelBtn: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 12,
+    minHeight: 48,
+    paddingVertical: 12,
+    borderRadius: radius.md,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   modalCancelText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#64748B',
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 13.5,
+    color: colors.textMuted,
   },
   modalSaveBtn: {
     flex: 1,
+    minHeight: 48,
     flexDirection: 'row',
     gap: 6,
-    paddingVertical: 10,
-    borderRadius: 12,
-    backgroundColor: '#7A9A8B',
+    paddingVertical: 12,
+    borderRadius: radius.md,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   modalSaveText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontFamily: typography.fontFamily.sansBold,
+    fontSize: 13.5,
+    color: colors.textInverse,
   },
 });

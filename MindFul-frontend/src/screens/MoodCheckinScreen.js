@@ -233,7 +233,9 @@ export default function MoodCheckinScreen({ navigation }) {
         <TouchableOpacity
           style={styles.backBtn}
           onPress={() => navigation.goBack()}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          activeOpacity={0.7}
+          accessibilityLabel="Go back"
         >
           <Ionicons name="arrow-back" size={22} color={colors.textMain} />
         </TouchableOpacity>
@@ -247,6 +249,7 @@ export default function MoodCheckinScreen({ navigation }) {
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         {/* Dynamic Atmospheric Banner */}
         <View style={[styles.bannerCard, { backgroundColor: activeMood.cardBg, borderColor: activeMood.border }]}>
@@ -298,6 +301,8 @@ export default function MoodCheckinScreen({ navigation }) {
                   ]}
                   onPress={() => setSelectedMood(mood.id)}
                   activeOpacity={0.75}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${mood.label}: ${mood.sub}`}
                 >
                   {/* Selected Active Checkmark Pill */}
                   {isSelected && (
@@ -319,7 +324,7 @@ export default function MoodCheckinScreen({ navigation }) {
                   <Text
                     style={[
                       styles.moodNameText,
-                      isSelected && { color: mood.accent, fontWeight: '700' },
+                      isSelected && { color: mood.accent, fontFamily: typography.fontFamily.sansBold },
                     ]}
                   >
                     {mood.label}
@@ -360,16 +365,16 @@ export default function MoodCheckinScreen({ navigation }) {
               onPress={decreaseIntensity}
               disabled={intensity <= 1}
               activeOpacity={0.7}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityLabel="Decrease intensity"
             >
-              <Ionicons name="remove" size={20} color={intensity <= 1 ? colors.textMuted : colors.textMain} />
+              <Ionicons name="remove" size={22} color={intensity <= 1 ? colors.textMuted : colors.textMain} />
             </TouchableOpacity>
 
             {/* 10 Interactive Waveform Equalizer Bars */}
             <View style={styles.equalizerTrack}>
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
                 const isActive = num <= intensity;
-                // Bar height scales progressively from 16px to 50px
                 const barHeight = 14 + num * 3.6;
                 return (
                   <TouchableOpacity
@@ -377,6 +382,8 @@ export default function MoodCheckinScreen({ navigation }) {
                     style={styles.equalizerCol}
                     onPress={() => setIntensity(num)}
                     activeOpacity={0.65}
+                    hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+                    accessibilityLabel={`Intensity level ${num}`}
                   >
                     <View
                       style={[
@@ -390,7 +397,7 @@ export default function MoodCheckinScreen({ navigation }) {
                     <Text
                       style={[
                         styles.equalizerNumText,
-                        isActive && { color: activeMood.accent, fontWeight: '700' },
+                        isActive && { color: activeMood.accent, fontFamily: typography.fontFamily.sansBold },
                       ]}
                     >
                       {num}
@@ -406,9 +413,10 @@ export default function MoodCheckinScreen({ navigation }) {
               onPress={increaseIntensity}
               disabled={intensity >= 10}
               activeOpacity={0.7}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityLabel="Increase intensity"
             >
-              <Ionicons name="add" size={20} color={intensity >= 10 ? colors.textMuted : colors.textMain} />
+              <Ionicons name="add" size={22} color={intensity >= 10 ? colors.textMuted : colors.textMain} />
             </TouchableOpacity>
           </View>
 
@@ -466,7 +474,8 @@ export default function MoodCheckinScreen({ navigation }) {
             <TouchableOpacity
               onPress={loadWeeklyHistory}
               style={styles.refreshIconBtn}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityLabel="Refresh weekly history"
             >
               {isLoadingHistory ? (
                 <ActivityIndicator size="small" color={colors.primary} />
@@ -585,6 +594,7 @@ export default function MoodCheckinScreen({ navigation }) {
                 style={styles.promptChip}
                 onPress={() => appendPrompt(prompt)}
                 activeOpacity={0.7}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
                 <Text style={styles.promptChipText}>{prompt}</Text>
               </TouchableOpacity>
@@ -606,16 +616,22 @@ export default function MoodCheckinScreen({ navigation }) {
         {/* STEP 5: SAVE TO SANCTUARY */}
         <View style={styles.saveActionArea}>
           <TouchableOpacity
-            style={[styles.savePrimaryButton, isSaving && { opacity: 0.7 }]}
+            style={[styles.savePrimaryButton, isSaving && { opacity: 0.75 }]}
             onPress={handleSave}
             disabled={isSaving}
             activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel="Save mood to sanctuary"
           >
-            <Ionicons
-              name={isSaving ? 'sync' : 'checkmark-circle'}
-              size={22}
-              color={colors.textInverse}
-            />
+            {isSaving ? (
+              <ActivityIndicator size="small" color={colors.textInverse} style={{ marginRight: 8 }} />
+            ) : (
+              <Ionicons
+                name="checkmark-circle"
+                size={22}
+                color={colors.textInverse}
+              />
+            )}
             <Text style={styles.savePrimaryButtonText}>
               {isSaving ? 'Holding Space...' : 'Save to My Sanctuary'}
             </Text>
@@ -647,9 +663,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceBase,
   },
   backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
@@ -878,9 +894,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   volumeBadgeText: {
-    fontFamily: typography.fontFamily.sansSemiBold,
+    fontFamily: typography.fontFamily.sansBold,
     fontSize: typography.sizes.labelSm,
-    fontWeight: '700',
   },
   volumeControllerRow: {
     flexDirection: 'row',
@@ -889,9 +904,9 @@ const styles = StyleSheet.create({
     marginVertical: spacing.xs,
   },
   stepperBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: '#F3F4F9',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1052,7 +1067,7 @@ const styles = StyleSheet.create({
   },
   dayAbbrToday: {
     color: colors.primary,
-    fontWeight: '700',
+    fontFamily: typography.fontFamily.sansBold,
   },
   dayNumber: {
     fontFamily: typography.fontFamily.sansRegular,
@@ -1062,7 +1077,7 @@ const styles = StyleSheet.create({
   },
   dayNumberToday: {
     color: colors.primary,
-    fontWeight: '700',
+    fontFamily: typography.fontFamily.sansBold,
   },
   dayMoodBubble: {
     width: 28,
@@ -1213,8 +1228,8 @@ const styles = StyleSheet.create({
   },
   promptChip: {
     backgroundColor: '#F3F4F9',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
     borderRadius: radius.pill,
   },
   promptChipText: {
@@ -1244,7 +1259,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 15,
+    minHeight: 52,
+    paddingVertical: 14,
     borderRadius: radius.lg,
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
