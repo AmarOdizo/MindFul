@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, typography, radius } from '../theme';
+import { colors, spacing, typography, radius, shadows } from '../theme';
 import { moodApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 

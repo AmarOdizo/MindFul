@@ -136,3 +136,11 @@ export const shadows = {
     elevation: 6,
   },
 };
+
+export default {
+  colors,
+  typography,
+  spacing,
+  radius,
+  shadows,
+};
