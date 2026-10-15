@@ -66,10 +66,18 @@ export default function RegisterScreen({ navigation }) {
 
     const result = await register(name.trim(), email.trim(), password);
     if (result.success) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainTabs' }],
-      });
+      if (result.requiresVerification) {
+        navigation.navigate('VerifyEmail', {
+          email: email.trim(),
+          justRegistered: true,
+          message: result.message,
+        });
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MainTabs' }],
+        });
+      }
     } else {
       setErrorMessage(result.error || 'Failed to create account. Please try again.');
     }

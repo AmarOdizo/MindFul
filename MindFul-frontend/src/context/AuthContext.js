@@ -20,7 +20,11 @@ export const AuthProvider = ({ children }) => {
       }
       throw new Error(response?.error || 'Invalid credentials');
     } catch (error) {
-      return { success: false, error: error.message || 'Login failed' };
+      return {
+        success: false,
+        error: error.message || 'Login failed',
+        code: error.code || error.data?.code || null,
+      };
     } finally {
       setIsLoading(false);
     }
@@ -36,11 +40,32 @@ export const AuthProvider = ({ children }) => {
         setAuthToken(response.token);
         return { success: true, user: response.user };
       }
+      if (response && response.requiresVerification) {
+        return {
+          success: true,
+          requiresVerification: true,
+          email: response.email,
+          message: response.message,
+          user: response.user,
+        };
+      }
       throw new Error(response?.error || 'Registration failed');
     } catch (error) {
-      return { success: false, error: error.message || 'Registration failed' };
+      return {
+        success: false,
+        error: error.message || 'Registration failed',
+        code: error.code || null,
+      };
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const setSession = (userData, userToken) => {
+    if (userData && userToken) {
+      setToken(userToken);
+      setUser(userData);
+      setAuthToken(userToken);
     }
   };
 
@@ -63,6 +88,7 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         login,
         register,
+        setSession,
         logout,
         updateUser,
       }}

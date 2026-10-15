@@ -23,6 +23,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [unverifiedEmail, setUnverifiedEmail] = useState('');
 
   const validateForm = () => {
     if (!email.trim()) {
@@ -43,6 +44,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     setErrorMessage('');
+    setUnverifiedEmail('');
     if (!validateForm()) return;
 
     const result = await login(email.trim(), password);
@@ -52,6 +54,12 @@ export default function LoginScreen({ navigation }) {
         routes: [{ name: 'MainTabs' }],
       });
     } else {
+      if (
+        result.code === 'EMAIL_NOT_VERIFIED' ||
+        result.error?.toLowerCase().includes('verify your email')
+      ) {
+        setUnverifiedEmail(email.trim());
+      }
       setErrorMessage(result.error || 'Failed to sign in. Please verify your details.');
     }
   };
@@ -107,9 +115,24 @@ export default function LoginScreen({ navigation }) {
           <View style={styles.formCard}>
             {/* Error Banner */}
             {errorMessage ? (
-              <View style={styles.errorBanner}>
-                <Ionicons name="alert-circle" size={16} color="#DC2626" />
-                <Text style={styles.errorBannerText}>{errorMessage}</Text>
+              <View style={styles.errorBannerContainer}>
+                <View style={styles.errorBanner}>
+                  <Ionicons name="alert-circle" size={16} color="#DC2626" />
+                  <Text style={styles.errorBannerText}>{errorMessage}</Text>
+                </View>
+                {unverifiedEmail ? (
+                  <TouchableOpacity
+                    style={styles.verifyActionBtn}
+                    onPress={() => {
+                      navigation.navigate('VerifyEmail', { email: unverifiedEmail });
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons name="mail-unread-outline" size={15} color="#059669" />
+                    <Text style={styles.verifyActionBtnText}>Verify Email / Resend Link</Text>
+                    <Ionicons name="arrow-forward" size={14} color="#059669" />
+                  </TouchableOpacity>
+                ) : null}
               </View>
             ) : null}
 
@@ -349,6 +372,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+  errorBannerContainer: {
+    marginBottom: 14,
+    gap: 8,
+  },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -357,9 +384,25 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 10,
-    marginBottom: 14,
     borderWidth: 1,
     borderColor: '#FCA5A5',
+  },
+  verifyActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+  },
+  verifyActionBtnText: {
+    fontFamily: typography.fontFamily.sansSemiBold,
+    fontSize: 12,
+    color: '#059669',
   },
   errorBannerText: {
     flex: 1,

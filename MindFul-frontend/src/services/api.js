@@ -36,50 +36,59 @@ export const getApiBaseUrls = () => {
     list.push(cachedWorkingBaseUrl);
   }
 
-  // 1. Primary Live Backend (Render Cloud)
-  if (!list.includes(PRODUCTION_API_URL)) {
-    list.push(PRODUCTION_API_URL);
-  }
-
-  // 2. Web fallback
+  // Web platform fallback
   if (Platform.OS === 'web') {
     if (!list.includes('http://localhost:5000')) list.push('http://localhost:5000');
+    if (!list.includes(PRODUCTION_API_URL)) list.push(PRODUCTION_API_URL);
     return list;
   }
 
-  const isEmulator = isAndroidEmulator();
-
-  // 3. Android Emulator (10.0.2.2 virtual alias to PC localhost)
-  if (isEmulator && !list.includes('http://10.0.2.2:5000')) {
-    list.push('http://10.0.2.2:5000');
-  }
-
-  // 4. Auto-detect from Metro scriptURL if available
+  // Auto-detect host from Metro scriptURL (supports exp://, exps://, http://, https://)
+  let detectedMetroHost = null;
   try {
     const scriptURL = NativeModules?.SourceCode?.scriptURL;
     if (scriptURL) {
-      const match = scriptURL.match(/https?:\/\/([^/:]+)/);
+      const match = scriptURL.match(/(?:https?|exps?):\/\/([^/:]+)/i);
       const host = match ? match[1] : null;
       if (host && host !== 'localhost' && host !== '127.0.0.1') {
-        const metroHost = `http://${host}:5000`;
-        if (!list.includes(metroHost)) list.push(metroHost);
+        detectedMetroHost = `http://${host}:5000`;
       }
     }
   } catch (e) {
     // ignore
   }
 
-  // 5. Active Wi-Fi LAN IP (192.168.1.3)
+  // 1. If running under Expo Go with local Metro, prioritize local PC backend
+  if (detectedMetroHost && !list.includes(detectedMetroHost)) {
+    list.push(detectedMetroHost);
+  }
+
+  // 2. Local Wi-Fi LAN IPs (user's current PC Wi-Fi IP is 192.168.1.5)
+  if (!list.includes('http://192.168.1.5:5000')) {
+    list.push('http://192.168.1.5:5000');
+  }
   if (!list.includes('http://192.168.1.3:5000')) {
     list.push('http://192.168.1.3:5000');
   }
 
-  // 6. 10.0.2.2 for Android in general
+  const isEmulator = isAndroidEmulator();
+
+  // 3. Android Emulator (10.0.2.2 alias to PC localhost)
+  if (isEmulator && !list.includes('http://10.0.2.2:5000')) {
+    list.push('http://10.0.2.2:5000');
+  }
+
+  // 4. Primary Live Backend (Render Cloud)
+  if (!list.includes(PRODUCTION_API_URL)) {
+    list.push(PRODUCTION_API_URL);
+  }
+
+  // 5. 10.0.2.2 general Android fallback
   if (Platform.OS === 'android' && !list.includes('http://10.0.2.2:5000')) {
     list.push('http://10.0.2.2:5000');
   }
 
-  // 7. Localhost fallback
+  // 6. Localhost fallback
   if (!list.includes('http://localhost:5000')) {
     list.push('http://localhost:5000');
   }
@@ -119,10 +128,10 @@ async function request(endpoint, options = {}) {
     const baseUrl = candidateUrls[i];
     const url = `${baseUrl}${endpoint}`;
 
-    // Give Render cloud URLs enough time to respond even on cold-start (20s)
+    // Fast failover: Give cloud 7s if alternatives exist, 20s if single candidate
     const isCloud = baseUrl.includes('onrender.com');
     const isSingleCandidate = candidateUrls.length === 1 || Boolean(cachedWorkingBaseUrl);
-    const timeoutMs = isCloud ? 20000 : (isSingleCandidate ? 15000 : 4000);
+    const timeoutMs = isCloud ? (isSingleCandidate ? 20000 : 7000) : (isSingleCandidate ? 15000 : 3500);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -144,7 +153,11 @@ async function request(endpoint, options = {}) {
       cachedWorkingBaseUrl = baseUrl;
 
       if (!response.ok) {
-        throw new Error(json.error || json.message || `HTTP ${response.status}`);
+        const err = new Error(json.error || json.message || `HTTP ${response.status}`);
+        err.status = response.status;
+        err.code = json.code;
+        err.data = json;
+        throw err;
       }
 
       return json;
@@ -275,6 +288,24 @@ export const authApi = {
     return request('/api/auth/profile', {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
+  },
+
+  resendVerification: async (email) => {
+    return request('/api/auth/resend-verification', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  verifyEmail: async (verificationData) => {
+    return request('/api/auth/verify', {
+      method: 'POST',
+      body: JSON.stringify(verificationData),
+    });
+  },
+
+  getVerificationStatus: async (email) => {
+    return request(`/api/auth/verification-status?email=${encodeURIComponent(email)}`);
   },
 };
 

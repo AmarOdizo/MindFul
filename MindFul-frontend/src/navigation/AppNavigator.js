@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import VerifyEmailScreen from '../screens/VerifyEmailScreen';
 import MoodCheckinScreen from '../screens/MoodCheckinScreen';
 import MeditationScreen from '../screens/MeditationScreen';
 import CrisisSupportScreen from '../screens/CrisisSupportScreen';
@@ -14,9 +15,30 @@ import { colors, typography } from '../theme';
 
 const Stack = createNativeStackNavigator();
 
+// Deep linking configuration for Expo React Native
+const linking = {
+  prefixes: [
+    'mindful://',
+    'https://mindful-6vxe.onrender.com',
+    'http://localhost:8081',
+    'http://localhost:5000',
+  ],
+  config: {
+    screens: {
+      WelcomeScreen: 'welcome',
+      Login: 'login',
+      Register: 'register',
+      VerifyEmail: {
+        path: 'verify-email',
+      },
+      MainTabs: 'app',
+    },
+  },
+};
+
 export default function AppNavigator() {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <StatusBar barStyle="dark-content" backgroundColor="#FAF9F6" />
       <Stack.Navigator
         initialRouteName="WelcomeScreen"
@@ -39,6 +61,10 @@ export default function AppNavigator() {
         <Stack.Screen 
           name="Register" 
           component={RegisterScreen} 
+        />
+        <Stack.Screen 
+          name="VerifyEmail" 
+          component={VerifyEmailScreen} 
         />
         <Stack.Screen 
           name="MainTabs" 
